@@ -2,6 +2,23 @@
 
 namespace be.Commons
 {
+
+    public enum RoleUsers
+    {
+        admin = 1,
+        user = 2
+    }
+    public enum StatusIssue
+    {
+        Open = 1,
+        Resolve = 2,
+        Cancelled = 3,
+        InProgress = 4,
+        Closed = 5,
+        Reopened = 6
+    }
+
+
     /// <summary>
     /// Class common hard data / Enum common data
     /// </summary>
@@ -82,12 +99,30 @@ namespace be.Commons
             new ObjDTO() { Id = 3, Value = "CONFIDENTIAL"}
         };
 
+        public List<ObjDTO> ResolutionResolve = new List<ObjDTO>()
+        {
+            new ObjDTO() { Id = 1, Value = "Accepted"},
+            new ObjDTO() { Id = 2, Value = "Avoid"},
+            new ObjDTO() { Id = 3, Value = "ByDesign"},
+            new ObjDTO() { Id = 4, Value = "Cancelled"},
+            new ObjDTO() { Id = 5, Value = "Cannot Reproduce"},
+            new ObjDTO() { Id = 6, Value = "Control"},
+            new ObjDTO() { Id = 7, Value = "Defer"},
+            new ObjDTO() { Id = 8, Value = "Done"},
+            new ObjDTO() { Id = 9, Value = "Duplicated"},
+            new ObjDTO() { Id = 10, Value = "External"},
+            new ObjDTO() { Id = 11, Value = "Fixed"},
+            new ObjDTO() { Id = 12, Value = "Incomplete"},
+        };
+
+        public List<ObjDTO> ResolutionCancel = new List<ObjDTO>()
+        {
+            new ObjDTO() { Id = 1, Value = "Cannot Reproduce"},
+            new ObjDTO() { Id = 2, Value = "Fixed"},
+            new ObjDTO() { Id = 3, Value = "Won't Fix"}
+        };
+
     }
 
-    public enum RoleUsers
-    {
-        admin = 1,
-        user = 2
-    }
 
 }

@@ -2,7 +2,7 @@
 
 namespace be.DTOs
 {
-    public class ListItemsToCreateIssueDTO
+    public class ListItemsOfIssueDTO
     {
         public List<Project>? Projects { get; set; }
 
@@ -50,6 +50,9 @@ namespace be.DTOs
 
         public List<LeakCause>? LeakCauses { get; set; }
 
-
+        // Resolve
+        public List<ObjDTO>? ResolutionResolve { get; set; }
+        // Cancel
+        public List<ObjDTO>? ResolutionCancel { get; set; }
     }
 }

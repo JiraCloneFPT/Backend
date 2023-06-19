@@ -16,6 +16,40 @@ namespace be.Services.IssueService
             _issueRepository = issueRepository;
         }
 
+        // Get issue by id
+        public async Task<ResponseDTO> GetIssueById(int id)
+        {
+            try
+            {
+                var result = await _issueRepository.GetByIdAsync(id);
+                if (result == null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Get Issue Failed!"
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Get Issue Success!",
+                        data = result
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
         // Create Issue
         public async Task<ResponseDTO> CreateIssue(IssueCreateDTO issue)
         {
@@ -49,12 +83,13 @@ namespace be.Services.IssueService
             }
         }
 
+
         // Get Items Create Issue
-        public async Task<ResponseDTO> GetItemsCreateIssue()
+        public async Task<ResponseDTO> GetItemsIssue()
         {
             try
             {
-                var result = await _issueRepository.GetItemsCreateIssue();
+                var result = await _issueRepository.GetItemsIssue();
                 if (result == null)
                 {
                     return new ResponseDTO

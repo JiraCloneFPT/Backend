@@ -10,10 +10,11 @@ namespace be.Repositories.IssueRepository
     public interface IIssueRepository : IBaseRepository<Issue>
     {
         // Get Items select list to Create Issue
-        Task<ListItemsToCreateIssueDTO> GetItemsCreateIssue();
+        Task<ListItemsOfIssueDTO> GetItemsIssue();
 
         // Create Issue
         Task<bool> CreateIssue(IssueCreateDTO issue);
+
 
     }
 }
