@@ -25,6 +25,8 @@ public partial class DbJiraCloneContext : DbContext
 
     public virtual DbSet<DefectType> DefectTypes { get; set; }
 
+    public virtual DbSet<FileAttachment> FileAttachments { get; set; }
+
     public virtual DbSet<History> Histories { get; set; }
 
     public virtual DbSet<Issue> Issues { get; set; }
@@ -107,6 +109,22 @@ public partial class DbJiraCloneContext : DbContext
             entity.Property(e => e.DefectTypeName)
                 .HasMaxLength(55)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<FileAttachment>(entity =>
+        {
+            entity.ToTable("FileAttachment");
+
+            entity.Property(e => e.Created).HasColumnType("date");
+            entity.Property(e => e.FileName)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.FilePath).IsUnicode(false);
+
+            entity.HasOne(d => d.Issue).WithMany(p => p.FileAttachments)
+                .HasForeignKey(d => d.IssueId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FileAttachment_Issue");
         });
 
         modelBuilder.Entity<History>(entity =>
