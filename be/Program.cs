@@ -29,8 +29,8 @@ builder.Services.AddCors();
 
 var services = builder.Services;
 
-services.AddScoped<IIssueRepository, IssueRepository>();
-services.AddScoped<IIssueService, IssueService>();
+services.AddScoped<IExportRepository, ExportRepository>();
+services.AddScoped<IExportService, IssueService>();
 
 var app = builder.Build();
 

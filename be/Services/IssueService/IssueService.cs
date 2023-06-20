@@ -7,11 +7,11 @@ namespace be.Services.IssueService
     /// <summary>
     /// Issue Service
     /// </summary>
-    public class IssueService : IIssueService
+    public class IssueService : IExportService
     {
-        private readonly IIssueRepository _issueRepository;
+        private readonly IExportRepository _issueRepository;
 
-        public IssueService(IIssueRepository issueRepository)
+        public IssueService(IExportRepository issueRepository)
         {
             _issueRepository = issueRepository;
         }
@@ -47,6 +47,16 @@ namespace be.Services.IssueService
                     message = ex.Message
                 };
             }
+        }
+
+        public async Task<object> GetElement(int id)
+        {
+            return await _issueRepository.GetElement(id);
+        }
+
+        public async Task<object> GetElementsByIdUser(int idUser , int idComponent)
+        {
+            return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
         }
 
         // Get Items Create Issue

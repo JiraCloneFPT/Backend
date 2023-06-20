@@ -10,13 +10,13 @@ namespace be.Controllers
     /// <summary>
     /// Issue Controller
     /// </summary>
-    [Route("api/issue")]
+    [Route("api/history")]
     [ApiController]
-    public class IssueController : ControllerBase
+    public class HistoryController : ControllerBase
     {
         private readonly IExportService _issueService;
         private readonly DbJiraCloneContext _context;
-        public IssueController(DbJiraCloneContext db, IExportService issueService)
+        public HistoryController(DbJiraCloneContext db, IExportService issueService)
         {
             _context = db;
             _issueService = issueService;
@@ -55,7 +55,7 @@ namespace be.Controllers
                 throw ex;
             }
         }
-        // Route get all issue by id user and id component
+
         [HttpGet("user")]
         public async Task<ActionResult> GetElementsByIdUser(int idUser, int idComponent)
         {
@@ -68,7 +68,7 @@ namespace be.Controllers
                 return BadRequest();
             }
         }
-        // Route get issue by id
+
         [HttpGet]
         public async Task<ActionResult> GetElement(int id)
         {
@@ -81,7 +81,6 @@ namespace be.Controllers
                 return BadRequest();
             }
         }
-        // Route get all issue
         [HttpGet("all")]
         public async Task<ActionResult> GetElements()
         {
