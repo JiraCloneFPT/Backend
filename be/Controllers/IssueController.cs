@@ -22,18 +22,33 @@ namespace be.Controllers
             _issueService = issueService;
         }
 
-        // Create Issue
-        [HttpPost("CreateIssue")]
-        public async Task<IActionResult> CreateIssue([FromBody] IssueCreateDTO issue)
+        // Get issue by id 
+        [HttpGet("GetIssueById")]
+        public async Task<IActionResult> GetIssueById(int id)
         {
             try
             {
-                //if(issue == null)
-                //{
-                //    return BadRequest();
-                //}
+                var resData = await _issueService.GetIssueById(id);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // Create Issue
+        [HttpPost("add")]
+        public async Task<ActionResult> Add([FromBody] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
                 var resData = await _issueService.CreateIssue(issue);
-                return StatusCode(resData.code, resData);
+                return Ok(resData);
             }
             catch (Exception ex)
             {
@@ -42,13 +57,13 @@ namespace be.Controllers
         }
 
         // Get Items select list to Create Issue 
-        [HttpGet("GetItemsCreateIssue")]
-        public async Task<IActionResult> GetItemsCreateIssue()
+        [HttpGet("GetItemsIssue")]
+        public async Task<IActionResult> GetItemsIssue()
         {
             try
             {
-                var resData = await _issueService.GetItemsCreateIssue();
-                return StatusCode(resData.code, resData);
+                var resData = await _issueService.GetItemsIssue();
+                return Ok(resData);
             }
             catch (Exception ex)
             {
@@ -99,18 +114,7 @@ namespace be.Controllers
                 return BadRequest();
             }
         }
-        [HttpPost("add")]
-        public async Task<ActionResult> Add([FromBody] Issue issue)
-        {
-            await _context.Issues.AddAsync(issue);
-            await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                message = "Add issue success!",
-                status = 200,
-                data = issue
-            });
-        }
+
         [HttpPut("edit")]
 
         public async Task<ActionResult> Edit([FromBody] Issue issue)

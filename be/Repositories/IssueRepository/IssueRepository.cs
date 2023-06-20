@@ -67,7 +67,7 @@ namespace be.Repositories.IssueRepository
                 newIssue.DueTime = issue.DueTime;
                 newIssue.Units = issue.Units;
                 newIssue.PercentDone = issue.PercentDone;
-                newIssue.StatusIssueId = issue.StatusIssueId;
+                newIssue.StatusIssueId = ((int)Commons.StatusIssue.Open) ; 
                 newIssue.CreateTime = DateTime.Now;
 
                 await context.Issues.AddAsync(newIssue);
@@ -81,11 +81,12 @@ namespace be.Repositories.IssueRepository
             }
         }
 
+
         // Get Items to Create Issue
-        public async Task<ListItemsToCreateIssueDTO> GetItemsCreateIssue()
+        public async Task<ListItemsOfIssueDTO> GetItemsIssue()
         {
             var enumCommon = new EnumCommon();
-            var result = new ListItemsToCreateIssueDTO()
+            var result = new ListItemsOfIssueDTO()
             {
                 Projects = context.Projects.Select(e => new Project { ProjectId = e.ProjectId, ProjectName = e.ProjectName }).ToList(),
                 IssueTypes = context.IssueTypes.Select(e => new IssueType { IssueTypeId = e.IssueTypeId, IssueTypeName = e.IssueTypeName }).ToList(),
@@ -112,6 +113,8 @@ namespace be.Repositories.IssueRepository
                 CauseCategories = context.CauseCategories.Select(e => new CauseCategory { CauseCategoryId = e.CauseCategoryId, CauseCategoryName = e.CauseCategoryName }).ToList(),
                 LeakCauses = context.LeakCauses.Select(e => new LeakCause { LeakCauseId = e.LeakCauseId, LeakCauseName = e.LeakCauseName }).ToList(),
 
+                ResolutionResolve = enumCommon.ResolutionResolve,
+                ResolutionCancel = enumCommon.ResolutionCancel,
             };
             return result;
         }
@@ -171,6 +174,7 @@ namespace be.Repositories.IssueRepository
             };
         }
 
+<<<<<<< HEAD
         //Get items Issue by idUser 
         public async Task<Object> GetElementsByIdUser(int idUser, int idComponent)
         {
@@ -213,6 +217,8 @@ namespace be.Repositories.IssueRepository
         }
 
         
+=======
+>>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
     }
 
 

@@ -77,7 +77,7 @@ public partial class Issue
 
     public string? FunctionCategory { get; set; }
 
-    public string? Issue1 { get; set; } // LinkedIssues
+    public string? Issue1 { get; set; }
 
     public string? EpicLink { get; set; }
 
@@ -112,6 +112,8 @@ public partial class Issue
     public virtual DefectOrigin? DefectOrigin { get; set; }
 
     public virtual DefectType? DefectType { get; set; }
+
+    public virtual ICollection<FileAttachment> FileAttachments { get; set; } = new List<FileAttachment>();
 
     public virtual IssueType? IssueType { get; set; }
 

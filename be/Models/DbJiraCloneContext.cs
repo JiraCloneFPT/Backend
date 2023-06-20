@@ -25,6 +25,8 @@ public partial class DbJiraCloneContext : DbContext
 
     public virtual DbSet<DefectType> DefectTypes { get; set; }
 
+    public virtual DbSet<FileAttachment> FileAttachments { get; set; }
+
     public virtual DbSet<History> Histories { get; set; }
 
     public virtual DbSet<Issue> Issues { get; set; }
@@ -55,7 +57,11 @@ public partial class DbJiraCloneContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+<<<<<<< HEAD
         => optionsBuilder.UseSqlServer("Data Source=Admin;Initial Catalog=dbJiraClone;Integrated Security=True;encrypt=false");
+=======
+        => optionsBuilder.UseSqlServer("Data Source=NGUYENHUNGPHU\\SQLEXPRESS;Initial Catalog=dbJiraClone;;TrustServerCertificate=True;Integrated Security=True;Trusted_Connection=True;");
+>>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -107,6 +113,22 @@ public partial class DbJiraCloneContext : DbContext
             entity.Property(e => e.DefectTypeName)
                 .HasMaxLength(55)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<FileAttachment>(entity =>
+        {
+            entity.ToTable("FileAttachment");
+
+            entity.Property(e => e.Created).HasColumnType("date");
+            entity.Property(e => e.FileName)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.FilePath).IsUnicode(false);
+
+            entity.HasOne(d => d.Issue).WithMany(p => p.FileAttachments)
+                .HasForeignKey(d => d.IssueId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_FileAttachment_Issue");
         });
 
         modelBuilder.Entity<History>(entity =>
