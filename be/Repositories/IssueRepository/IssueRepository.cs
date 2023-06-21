@@ -2,15 +2,11 @@
 using be.DTOs;
 using be.Models;
 using be.Repositories.BaseRepository;
-<<<<<<< HEAD
 using be.Services.OtherService;
-using Microsoft.Extensions.Logging;
-=======
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using Component = be.Models.Component;
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
+
 
 namespace be.Repositories.IssueRepository
 {
@@ -18,20 +14,13 @@ namespace be.Repositories.IssueRepository
     /// <summary>
     /// Issue Repository
     /// </summary> 
-<<<<<<< HEAD
 
     public class IssueRepository : BaseRepository<Issue>, IIssueRepository
     {
 
-        private readonly EmailService _emailService; 
         public IssueRepository(DbJiraCloneContext context) : base(context)
-=======
-    public class ExportRepository : BaseRepository<Issue>, IExportRepository
-    {
-        public ExportRepository(DbJiraCloneContext context) : base(context)
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
         {
-            _emailService = new EmailService(); 
+            
         }
 
         public async Task<Issue> CreateIssue(IssueCreateDTO issue)
@@ -91,13 +80,11 @@ namespace be.Repositories.IssueRepository
                 await context.Issues.AddAsync(newIssue);
                 await context.SaveChangesAsync();
 
-<<<<<<< HEAD
+
                 var lastIssue = context.Issues.Where(e => e.CreateTime == dateTime).FirstOrDefault();
 
                 return lastIssue;
-=======
-                return created > 0 ? true : false;
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
+
             }
             catch (Exception ex)
             {
@@ -197,7 +184,7 @@ namespace be.Repositories.IssueRepository
             };
         }
 
-<<<<<<< HEAD
+
         //Get items Issue by idUser 
         public async Task<Object> GetElementsByIdUser(int idUser, int idComponent)
         {
@@ -240,8 +227,7 @@ namespace be.Repositories.IssueRepository
         }
 
         
-=======
->>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
+
     }
 
 
