@@ -1,6 +1,9 @@
 ﻿using be.DTOs;
 using be.Models;
 using be.Repositories.IssueRepository;
+using be.Services.OtherService;
+using be.Services.UserService;
+using MailKit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -9,13 +12,19 @@ namespace be.Services.IssueService
     /// <summary>
     /// Issue Service
     /// </summary>
-    public class IssueService : IIssueService
+    public class IssueService : IExportService
     {
-        private readonly IIssueRepository _issueRepository;
+        private readonly IExportRepository _issueRepository;
 
-        public IssueService(IIssueRepository issueRepository)
+
+        private readonly IUserService _userService; 
+
+
+        public IssueService(IIssueRepository issueRepository, IUserService userService)
         {
             _issueRepository = issueRepository;
+
+            _userService = userService;
         }
 
         // Edit issue
@@ -51,6 +60,10 @@ namespace be.Services.IssueService
                 };
             }
         }
+
+            
+        
+      
 
         // Get issue by id
         public async Task<ResponseDTO> GetIssueById(int id)
@@ -106,6 +119,8 @@ namespace be.Services.IssueService
                 }
                 else
                 {
+                    User assignee = _userService.GetUserById(issue.AssigneeId.Value); 
+                    EmailService.Instance.SendMailCreate(result, assignee); 
                     return new ResponseDTO
                     {
                         code = 200,
@@ -121,6 +136,21 @@ namespace be.Services.IssueService
                     message = ex.Message
                 };
             }
+        }
+
+        public void SendEmailCreateIssue()
+        {
+
+        }
+
+        public async Task<object> GetElement(int id)
+        {
+            return await _issueRepository.GetElement(id);
+        }
+
+        public async Task<object> GetElementsByIdUser(int idUser , int idComponent)
+        {
+            return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
         }
 
         // Get Items Create Issue
@@ -157,5 +187,9 @@ namespace be.Services.IssueService
             }
         }
 
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
+        {
+            return _issueRepository.GetAllIssueByUserId(userId);
+        }
     }
 }

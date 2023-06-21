@@ -1,6 +1,9 @@
 ﻿using be.DTOs;
 using be.Models;
 using be.Services.IssueService;
+using be.Services.OtherService;
+using be.Services.UserService;
+using MailKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
@@ -14,12 +17,20 @@ namespace be.Controllers
     [ApiController]
     public class IssueController : ControllerBase
     {
-        private readonly IIssueService _issueService;
+        private readonly IExportService _issueService;
         private readonly DbJiraCloneContext _context;
+<<<<<<< HEAD
+        private readonly IUserService _userService;
+      
         public IssueController(DbJiraCloneContext db, IIssueService issueService)
+=======
+        public IssueController(DbJiraCloneContext db, IExportService issueService)
+>>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
         {
             _context = db;
             _issueService = issueService;
+            _userService = new UserService();
+           
         }
 
         // Edit Issue
@@ -67,6 +78,7 @@ namespace be.Controllers
                     return BadRequest();
                 }
                 var resData = await _issueService.CreateIssue(issue);
+                
                 return Ok(resData);
             }
             catch (Exception ex)
@@ -108,94 +120,33 @@ namespace be.Controllers
                 throw ex;
             }
         }
-
-        [HttpGet("report")]
-        public ActionResult GetDataReportedByMe(int idUser)
-        {
-            var result = (from i in _context.Issues
-                          where i.ReporterId == idUser
-                          join u in _context.Users on i.Assignee.UserId equals u.UserId
-                          join it in _context.IssueTypes on i.IssueType.IssueTypeId equals it.IssueTypeId
-                          select new
-                          {
-                              i.IssueId,
-                              u.FullName,
-                              i.Summary,
-                              it.IssueTypeImage,
-                          }).ToList();
-
-            if (result == null)
-            {
-                return BadRequest();
-            }
-            return Ok(new
-            {
-                status = 200,
-                data = result
-            });
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> GetElement(int id)
+        // Route get all issue by id user and id component
+        [HttpGet("user")]
+        public async Task<ActionResult> GetElementsByIdUser(int idUser, int idComponent)
         {
             try
             {
-                var data = await _context.Issues.Where(x => x.IssueId == id).Select(issue => new
-                {
-                    issue.IssueId,
-                    issue.ProjectId,
-                    projecyName = _context.Projects.Where(x => x.ProjectId == issue.ProjectId).FirstOrDefault().ProjectName,
-                    issue.IssueType,
-                    issueTypeName = _context.IssueTypes.Where(x => x.IssueTypeId == issue.IssueTypeId).FirstOrDefault().IssueTypeName,
-                    issue.ComponentId,
-                    componentName = _context.Components.Where(x => x.ComponentId == issue.ComponentId).FirstOrDefault().ComponentName,
-                    issue.ProductId,
-                    productName = _context.Products.Where(x => x.ProductId == issue.ProductId).FirstOrDefault().ProductName,
-                    issue.ReporterId,
-                    reporterName = _context.Users.Where(x => x.UserId == issue.ReporterId).FirstOrDefault().FullName,
-                    issue.AssigneeId,
-                    assigneeName = _context.Users.Where(x => x.UserId == issue.AssigneeId).FirstOrDefault().FullName,
-                    issue.Summary,
-                    issue.Description,
-                    issue.DefectOriginId,
-                    defectOriginName = _context.DefectOrigins.Where(x => x.DefectOriginId == issue.DefectOriginId).FirstOrDefault().DefectOriginName,
-                    issue.PriorityId,
-                    priorityName = _context.Priorities.Where(x => x.PriorityId == issue.PriorityId).FirstOrDefault().PriorityName,
-                    issue.QcactivityId,
-                    qcActivityName = _context.Qcactivities.Where(x => x.QcactivityId == issue.QcactivityId).FirstOrDefault().QcactivityName,
-                    issue.RoleIssueId,
-                    roleIssueName = _context.RoleIssues.Where(x => x.RoleIssueId == issue.RoleIssueId).FirstOrDefault().RoleIssueName,
-                    issue.DefectTypeId,
-                    defectypeName = _context.DefectTypes.Where(x => x.DefectTypeId == issue.DefectTypeId).FirstOrDefault().DefectTypeName,
-                    issue.CauseCategoryId,
-                    causeCategoryName = _context.CauseCategories.Where(x => x.CauseCategoryId == issue.CauseCategoryId).FirstOrDefault().CauseCategoryName,
-                    issue.LeakCauseId,
-                    leakCauseName = _context.LeakCauses.Where(x => x.LeakCauseId == issue.LeakCauseId).FirstOrDefault().LeakCauseName,
-                    issue.StatusIssueId,
-                    statusIssueName = _context.StatusIssues.Where(x => x.StatusIssueId == issue.StatusIssueId).FirstOrDefault().StatusIssueName,
-                    issue.SecurityLevel,
-                    issue.Labels,                    
-                }).FirstOrDefaultAsync();
-                if (data == null)
-                {
-                    return Ok(new
-                    {
-                        status = 400,
-                        message = "The issue doesn't exist in database"
-                    });
-                }
-                return Ok(new
-                {
-                    status = 200,
-                    data,
-                    message = "Get issue is success!"
-                });
+                return Ok(await _issueService.GetElementsByIdUser(idUser, idComponent));
             }
             catch
             {
                 return BadRequest();
             }
         }
+        // Route get issue by id
+        [HttpGet]
+        public async Task<ActionResult> GetElement(int id)
+        {
+            try
+            {
+                return Ok(await _issueService.GetElement(id));
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        // Route get all issue
         [HttpGet("all")]
         public async Task<ActionResult> GetElements()
         {
@@ -245,6 +196,21 @@ namespace be.Controllers
                     status = 400,
                     data = e.Message
                 });
+            }
+        }
+
+        //Phần của Huy
+        [HttpGet("GetAllIsseByUserId")]
+        public ActionResult GetAllIsseByUserId(int userId)
+        {
+            try
+            {
+                var issueList = _issueService.GetAllIssueByUserId(userId);
+                return Ok(issueList);
+            }
+            catch
+            {
+                return BadRequest();
             }
         }
     }

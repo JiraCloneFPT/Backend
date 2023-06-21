@@ -6,7 +6,7 @@ namespace be.Services.IssueService
     /// <summary>
     /// Interface Issue Service
     /// </summary>
-    public interface IIssueService
+    public interface IExportService
     {
         // Edit issue
         Task<ResponseDTO> EditIssue(IssueCreateDTO issue);
@@ -16,8 +16,13 @@ namespace be.Services.IssueService
 
         // Create Issue
         Task<ResponseDTO> CreateIssue(IssueCreateDTO issue);
+        Task<object> GetElement(int id);
+        Task<object> GetElementsByIdUser(int idUser, int idComponent);
 
         // Get Issue By id
         Task<ResponseDTO> GetIssueById(int id);
+
+        //Phần của Huy
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId);
     }
 }
