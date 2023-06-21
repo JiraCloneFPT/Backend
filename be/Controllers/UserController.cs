@@ -11,14 +11,14 @@ namespace be.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
         private readonly EmailService _emailService;
         private readonly IConfiguration _configuration;
 
-        public UserController(IConfiguration configuration)
+        public UserController(IConfiguration configuration, IUserService userService)
         {
-            _userService = new UserService();
+            _userService = userService;
             _emailService = new EmailService();
             _configuration = configuration;
         }
@@ -224,7 +224,7 @@ namespace be.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult Login([FromBody] Login login)
+        public ActionResult Login( Login login)
         {
             try
             {
