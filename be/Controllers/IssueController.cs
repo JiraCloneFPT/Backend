@@ -1,4 +1,6 @@
-﻿using be.DTOs;
+﻿using AutoMapper;
+using be.DTOs;
+using be.Helpers;
 using be.Models;
 using be.Services.IssueService;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +16,16 @@ namespace be.Controllers
     [ApiController]
     public class IssueController : ControllerBase
     {
-        private readonly IExportService _issueService;
+        private readonly IIssueService _issueService;
+        private readonly Mapper mapper;
+        private readonly HandleData handleData;
         private readonly DbJiraCloneContext _context;
-        public IssueController(DbJiraCloneContext db, IExportService issueService)
+        public IssueController(DbJiraCloneContext db, IIssueService issueService)
         {
+            mapper = MapperConfig.InitializeAutomapper();
             _context = db;
             _issueService = issueService;
+            handleData = new HandleData();
         }
 
         // Get issue by id 
@@ -68,19 +74,6 @@ namespace be.Controllers
             catch (Exception ex)
             {
                 throw ex;
-            }
-        }
-        // Route get all issue by id user and id component
-        [HttpGet("user")]
-        public async Task<ActionResult> GetElementsByIdUser(int idUser, int idComponent)
-        {
-            try
-            {
-                return Ok(await _issueService.GetElementsByIdUser(idUser, idComponent));
-            }
-            catch
-            {
-                return BadRequest();
             }
         }
         // Route get issue by id
@@ -169,5 +162,51 @@ namespace be.Controllers
                 });
             }
         }
+
+
+
+
+        #region HIEUVM15
+
+        [HttpGet("myopenissue")]
+        public async Task<ActionResult<IEnumerable<IssueDTO>>> MyOpenIssue(int idUser)
+        {
+            try
+            {
+                var result = await _issueService.MyOpenIssue(idUser);
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet("reportbyme")]
+        public async Task<ActionResult<IEnumerable<IssueDTO>>> ReportByMe(int idUser)
+        {
+            try
+            {
+                var result = await _issueService.ReportByMe(idUser);
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet("allissue")]
+        public async Task<ActionResult<IEnumerable<IssueDTO>>> AllIssue(int idUser)
+        {
+            try
+            {
+                var result = await _issueService.AllIssue(idUser);
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        #endregion
     }
 }

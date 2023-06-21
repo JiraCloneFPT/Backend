@@ -14,9 +14,9 @@ namespace be.Controllers
     [ApiController]
     public class HistoryController : ControllerBase
     {
-        private readonly IExportService _issueService;
+        private readonly IIssueService _issueService;
         private readonly DbJiraCloneContext _context;
-        public HistoryController(DbJiraCloneContext db, IExportService issueService)
+        public HistoryController(DbJiraCloneContext db, IIssueService issueService)
         {
             _context = db;
             _issueService = issueService;
@@ -41,33 +41,20 @@ namespace be.Controllers
             }
         }
 
-        // Get Items select list to Create Issue 
-        [HttpGet("GetItemsCreateIssue")]
-        public async Task<IActionResult> GetItemsCreateIssue()
-        {
-            try
-            {
-                var resData = await _issueService.GetItemsCreateIssue();
-                return StatusCode(resData.code, resData);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        [HttpGet("user")]
-        public async Task<ActionResult> GetElementsByIdUser(int idUser, int idComponent)
-        {
-            try
-            {
-                return Ok(await _issueService.GetElementsByIdUser(idUser, idComponent));
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
+        //// Get Items select list to Create Issue 
+        //[HttpGet("GetItemsCreateIssue")]
+        //public async Task<IActionResult> GetItemsCreateIssue()
+        //{
+        //    try
+        //    {
+        //        var resData = await _issueService.GetItemsCreateIssue();
+        //        return StatusCode(resData.code, resData);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         [HttpGet]
         public async Task<ActionResult> GetElement(int id)

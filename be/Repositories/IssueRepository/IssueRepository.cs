@@ -1,5 +1,7 @@
-﻿using be.Commons;
+﻿using AutoMapper;
+using be.Commons;
 using be.DTOs;
+using be.Helpers;
 using be.Models;
 using be.Repositories.BaseRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +15,14 @@ namespace be.Repositories.IssueRepository
     /// <summary>
     /// Issue Repository
     /// </summary> 
-    public class ExportRepository : BaseRepository<Issue>, IExportRepository
+    public class IssueRepository : BaseRepository<Issue>, IIssueRepository
     {
-        public ExportRepository(DbJiraCloneContext context) : base(context)
+        private readonly HandleData handleData;
+        private readonly Mapper mapper;
+        public IssueRepository(DbJiraCloneContext context) : base(context)
         {
+            mapper = MapperConfig.InitializeAutomapper();
+            handleData = new HandleData();
         }
 
         public async Task<bool> CreateIssue(IssueCreateDTO issue)
@@ -106,7 +112,7 @@ namespace be.Repositories.IssueRepository
                 FunctionCategories = enumCommon.FunctionCategories,
                 // not match // Maybe match with Issue1 in model 
                 LinkedIssues = enumCommon.LinkedIssues,
-                Issues = context.Issues.Select(e => new Issue { IssueId = e.IssueId, Summary = e.Summary }).Take(10).ToList(),
+                //Issues = context.Issues.Select(e => new Issue { IssueId = e.IssueId, Summary = e.Summary }).Take(10).ToList(),
                 EpicLinks = enumCommon.EpicLinks,
                 SecurityLevels = enumCommon.SecurityLevels,
                 DefectTypes = context.DefectTypes.Select(e => new DefectType { DefectTypeId = e.DefectTypeId, DefectTypeName = e.DefectTypeName }).Take(10).ToList(),
@@ -174,51 +180,34 @@ namespace be.Repositories.IssueRepository
             };
         }
 
-<<<<<<< HEAD
-        //Get items Issue by idUser 
-        public async Task<Object> GetElementsByIdUser(int idUser, int idComponent)
+        public async Task<object> MyOpenIssue(int idUser)
         {
-            var result = idComponent == -1 ? (from i in context.Issues
-                                              where i.ReporterId == idUser
-                                              join u in context.Users on i.Assignee.UserId equals u.UserId
-                                              join it in context.IssueTypes on i.IssueType.IssueTypeId equals it.IssueTypeId
-                                              select new
-                                              {
-                                                  i.IssueId,
-                                                  u.FullName,
-                                                  i.Summary,
-                                                  it.IssueTypeImage,
-                                                  i.ComponentId
-                                              }).ToList() : (from i in context.Issues
-                                                             where i.ReporterId == idUser && i.ComponentId == idComponent
-                                                             join u in context.Users on i.Assignee.UserId equals u.UserId
-                                                             join it in context.IssueTypes on i.IssueType.IssueTypeId equals it.IssueTypeId
-                                                             select new
-                                                             {
-                                                                 i.IssueId,
-                                                                 u.FullName,
-                                                                 i.Summary,
-                                                                 it.IssueTypeImage,
-                                                                 i.ComponentId
-                                                             }).ToList();
-
-            if (result == null)
-            {
-                return new
-                {
-                    status = 400
-                };
-            }
+            var statustype = await context.StatusIssues.Where(x => x.StatusIssueName.Equals("Open")).FirstOrDefaultAsync();
+            var data = await context.Issues.Where(x => x.AssigneeId == idUser || x.ReporterId == idUser).Where(x => x.StatusIssueId == statustype.StatusIssueId).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
             return new
             {
                 status = 200,
-                data = result
+                data
             };
         }
-
-        
-=======
->>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
+        public async Task<object> ReportByMe(int idUser)
+        {
+            var data = await context.Issues.Where(x => x.ReporterId == idUser).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
+            return new
+            {
+                status = 200,
+                data
+            };
+        }
+        public async Task<object> AllIssue(int idUser)
+        {
+            var data = await context.Issues.Where(x => x.ReporterId == idUser || x.AssigneeId == idUser).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
+            return new
+            {
+                status = 200,
+                data
+            };
+        }
     }
 
 

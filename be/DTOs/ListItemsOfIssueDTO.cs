@@ -38,7 +38,7 @@ namespace be.DTOs
 
         public List<ObjDTO>? LinkedIssues { get; set; }
 
-        public List<Issue>? Issues { get; set; }
+        public List<IssueDTO>? Issues { get; set; }
 
         public List<ObjDTO>? EpicLinks { get; set; }
 

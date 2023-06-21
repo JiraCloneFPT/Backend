@@ -99,6 +99,8 @@ public partial class Issue
 
     public int? StatusIssueId { get; set; }
 
+    public string? Resolution { get; set; }
+
     public DateTime CreateTime { get; set; }
 
     public virtual User? Assignee { get; set; }

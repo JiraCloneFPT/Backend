@@ -101,5 +101,7 @@ public partial class History
 
     public int? StatusIssueId { get; set; }
 
+    public string? Resolution { get; set; }
+
     public DateTime UpdateTime { get; set; }
 }

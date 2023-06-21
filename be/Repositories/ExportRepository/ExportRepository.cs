@@ -1,41 +1,42 @@
 ﻿using be.Models;
-using OfficeOpenXml;
 using System.Text;
+using AutoMapper;
+using be.DTOs;
+using be.Helpers;
+using OfficeOpenXml;
 
-namespace be.Services
+namespace be.Repositories.ExportRepository
 {
-    public class ExportService
+    public class ExportRepository : IExportRepository
     {
         private readonly DbJiraCloneContext _context;
-        public ExportService()
+        private readonly HandleData handleData;
+        private readonly Mapper mapper;
+        public ExportRepository()
         {
             _context = new DbJiraCloneContext();
+            mapper = MapperConfig.InitializeAutomapper();
+            handleData = new HandleData();
         }
-        public CustomFile ExportFileHtml(List<Issue> data)
+        public CustomFile ExportFileHtml(List<IssueDTO> data)
         {
             string html = "";
             foreach (var items in data)
             {
-                string nameProject = _context.Projects.Where(x => x.ProjectId == items.ProjectId).Select(x => x.ProjectName).FirstOrDefault();
-                string nameIssueType = _context.IssueTypes.Where(x => x.IssueTypeId == items.IssueTypeId).Select(x => x.IssueTypeName).FirstOrDefault();
-                string nameStatusIssue = _context.StatusIssues.Where(x => x.StatusIssueId == items.StatusIssueId).Select(x => x.StatusIssueName).FirstOrDefault();
-                string namePriority = _context.Priorities.Where(x => x.PriorityId == items.PriorityId).Select(x => x.PriorityName).FirstOrDefault();
-                string nameAssignee = _context.Users.Where(x => x.UserId == items.AssigneeId).Select(x => x.FullName).FirstOrDefault();
-                string nameReporter = _context.Users.Where(x => x.UserId == items.ReporterId).Select(x => x.FullName).FirstOrDefault();
                 html += "<tr id=\"" + items.IssueId + "\" rel=\"8497741\" data-issuekey=\"FSOFTACADEMY-13280\" class=\"issuerow\">\r\n\t\t\t\t\t<td class=\"project\"> "
-                    + nameProject + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"issuekey\">" + items.IssueId + "\r\n\t\t\t\t\t\t<a class=\"issue-link\" data-issue-key=\"FSOFTACADEMY-13280\" href=\"https://insight.fsoft.com.vn/jira3/browse/FSOFTACADEMY-13280\">" +
-                    items.Assignee + "</a>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"summary\">\r\n\t\t\t\t\t\t<p>\r\n\t\t\t\t\t\t\t" +
+                    + items.ProjectName + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"issuekey\">" + items.IssueId + "\r\n\t\t\t\t\t\t<a class=\"issue-link\" data-issue-key=\"FSOFTACADEMY-13280\" href=\"https://insight.fsoft.com.vn/jira3/browse/FSOFTACADEMY-13280\">" +
+                    items.AssigneeName + "</a>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"summary\">\r\n\t\t\t\t\t\t<p>\r\n\t\t\t\t\t\t\t" +
                     items.Summary + "\r\n\t\t\t\t\t\t</p>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"issuetype\"> " +
-                    nameIssueType + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"status\">\r\n\t\t\t\t\t\t<span\r\n\t\t\t\t\t\t\tclass=\" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-default jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium\"\r\n\t\t\t\t\t\t\tdata-tooltip=\"&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Open&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;jira-issue-status-tooltip-desc&quot;&gt;The issue is open and ready for the assignee to start work on it.&lt;/span&gt;\"\r\n\t\t\t\t\t\t\ttitle=\"&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Open&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;jira-issue-status-tooltip-desc&quot;&gt;The issue is open and ready for the assignee to start work on it.&lt;/span&gt;\">" +
-                    nameStatusIssue + "</span>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"priority\"> " +
-                    namePriority + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"resolution\"> <em>Unresolved</em>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"assignee\">" +
-                    nameAssignee + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"reporter\">" +
-                    nameReporter + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"creator\"> " +
-                    nameReporter + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"created\"> " +
+                    items.IssueTypeName + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"status\">\r\n\t\t\t\t\t\t<span\r\n\t\t\t\t\t\t\tclass=\" jira-issue-status-lozenge aui-lozenge jira-issue-status-lozenge-default jira-issue-status-lozenge-new aui-lozenge-subtle jira-issue-status-lozenge-max-width-medium\"\r\n\t\t\t\t\t\t\tdata-tooltip=\"&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Open&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;jira-issue-status-tooltip-desc&quot;&gt;The issue is open and ready for the assignee to start work on it.&lt;/span&gt;\"\r\n\t\t\t\t\t\t\ttitle=\"&lt;span class=&quot;jira-issue-status-tooltip-title&quot;&gt;Open&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;jira-issue-status-tooltip-desc&quot;&gt;The issue is open and ready for the assignee to start work on it.&lt;/span&gt;\">" +
+                    items.StatusIssueName + "</span>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"priority\"> " +
+                    items.PriorityName + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"resolution\"> <em>Unresolved</em>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"assignee\">" +
+                    items.AssigneeName + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"reporter\">" +
+                    items.ReporterName + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"creator\"> " +
+                    items.ReporterName + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"created\"> " +
                     items.CreateTime + " </td>\r\n\t\t\t\t\t<td class=\"lastViewed\"> " +
                     "19/Jun/23 10:07 AM </td>\r\n\t\t\t\t\t<td class=\"updated\"> " +
                     "30/May/23 4:37 PM </td>\r\n\t\t\t\t\t<td class=\"resolutiondate\"> &nbsp; </td>\r\n\t\t\t\t\t<td class=\"versions\"> &nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"fixVersions\"> &nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"components\"> " +
-                    items.Component?.ComponentName + " </td>\r\n\t\t\t\t\t<td class=\"duedate\"> &nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"votes\">0</td>\r\n\t\t\t\t\t<td class=\"watches\">1</td>\r\n\t\t\t\t\t<td class=\"thumbnail\"></td>\r\n\t\t\t\t\t<td class=\"timeoriginalestimate\"></td>\r\n\t\t\t\t\t<td class=\"timeestimate\"></td>\r\n\t\t\t\t\t<td class=\"timespent\"></td>\r\n\t\t\t\t\t<td class=\"workratio\">&nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"subtasks\"> </td>\r\n\t\t\t\t\t<td class=\"issuelinks\"> </td>\r\n\t\t\t\t\t<td class=\"environment\"></td>\r\n\t\t\t\t\t<td class=\"description\">" +
+                    items.ComponentName + " </td>\r\n\t\t\t\t\t<td class=\"duedate\"> &nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"votes\">0</td>\r\n\t\t\t\t\t<td class=\"watches\">1</td>\r\n\t\t\t\t\t<td class=\"thumbnail\"></td>\r\n\t\t\t\t\t<td class=\"timeoriginalestimate\"></td>\r\n\t\t\t\t\t<td class=\"timeestimate\"></td>\r\n\t\t\t\t\t<td class=\"timespent\"></td>\r\n\t\t\t\t\t<td class=\"workratio\">&nbsp;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"subtasks\"> </td>\r\n\t\t\t\t\t<td class=\"issuelinks\"> </td>\r\n\t\t\t\t\t<td class=\"environment\"></td>\r\n\t\t\t\t\t<td class=\"description\">" +
                     items.Description + "\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"security\">" +
                     items.Severity + "</td>\r\n\t\t\t\t\t<td class=\"progress\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"aggregateprogress\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"aggregatetimespent\"></td>\r\n\t\t\t\t\t<td class=\"aggregatetimeestimate\"></td>\r\n\t\t\t\t\t<td class=\"aggregatetimeoriginalestimate\"></td>\r\n\t\t\t\t\t<td class=\"labels\"> </td>\r\n\t\t\t\t\t<td class=\"customfield_14008\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12905\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14012\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13809\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11934\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13600\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17403\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11933\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13710\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12609\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11820\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12607\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13205\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13715\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13501\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12108\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12427\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17504\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12906\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16600\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17301\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18000\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13708\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12443\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12102\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16909\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16908\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13003\"> </td>\r\n\t\t\t\t\t<td class=\"customfield_17601\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17509\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17506\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_11500\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11501\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11939\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11941\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17902\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_18002\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18003\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17903\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_18004\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17904\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_18005\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17905\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_18006\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18007\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18008\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18009\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18401\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17900\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12000\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10601\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10602\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10300\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11946\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13712\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13713\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18303\"> OK\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_18304\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13207\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14003\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_18700\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12901\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14007\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_11400\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13101\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17507\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17503\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12500\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12601\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17508\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12637\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11928\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14013\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12422\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18200\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10603\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10604\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18201\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19000\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12908\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13300\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13305\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17703\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17701\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12907\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11000\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11001\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14002\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_13200\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16906\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11401\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10301\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13709\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12619\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10600\"> Sửa lại code validation check Id Card, test lại function\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_18701\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13001\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12113\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18900\">\r\n\t\t\t\t\t\t<div class='dev-status-column-view-wrapper'></div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_19006\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19007\"> </td>\r\n\t\t\t\t\t<td class=\"customfield_12613\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10202\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14302\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11823\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13302\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18501\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10005\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10001\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10004\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10003\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10007\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11944\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10400\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13100\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11402\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19001\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11107\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12612\"> </td>\r\n\t\t\t\t\t<td class=\"customfield_15000\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18100\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18300\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13400\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18600\"> No\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_16800\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_13705\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_11829\"> </td>\r\n\t\t\t\t\t<td class=\"customfield_11403\"></td>\r\n\t\t\t\t\t<td class=\"customfield_15300\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16904\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16900\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16901\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16902\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16907\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16905\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16903\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14004\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_16000\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17600\"> External\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12421\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12423\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12426\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12431\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11938\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12420\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13301\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12604\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12115\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11943\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12114\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10304\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12616\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17602\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13707\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18403\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11104\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11103\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13201\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12620\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18400\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13714\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13801\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17510\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12621\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16200\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18602\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18402\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11926\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11932\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11931\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12432\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12909\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13711\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12430\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12910\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19013\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19014\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13808\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19002\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19003\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13206\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16911\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14005\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12629\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10201\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14100\"> Default Permission Scheme\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_11929\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12602\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13706\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12608\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12606\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11930\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10203\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10401\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13004\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13007\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_15500\"></td>\r\n\t\t\t\t\t<td class=\"customfield_15400\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12610\"> Fsoft Academy Product [FSOFTACADEMY-1]\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12603\">\r\n\t\t\t\t\t\t<div class=\"aui-message aui-message-error\">\r\n\t\t\t\t\t\t\t<p>Error rendering 'productTypeSelectField'. Please contact your Jira administrators.\r\n\t\t\t\t\t\t\t\t<p />\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_14001\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_13009\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13700\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17400\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18301\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13702\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12622\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18801\">None\r\n\t\t\t\t\t\t<script type=\"text/javascript\">\r\n\t\t\t\t\t\t\t$(document).ready(function () {\r\n\t\t\t\t\t\t\t\tsetTimeout(function () {\r\n\t\t\t\t\t\t\t\t\t$(\"#\" + \"customfield_18801\" + \"-val\").css(\"pointer-events\", \"none\");\r\n\t\t\t\t\t\t\t\t\t$(\"#customfield_\" + \"0\" + \"-val\").css(\"pointer-events\", \"none\");\r\n\t\t\t\t\t\t\t\t}, 50)\r\n\t\t\t\t\t\t\t});\r\n\t\t\t\t\t\t</script>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12614\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18302\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13703\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13701\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13704\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14101\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12700\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17000\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_13901\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13900\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16910\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13500\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11942\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12902\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13716\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13717\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10302\"> Code Review\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_11600\"> 0|ig7eb4:\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_10002\"> 9223372036854775807\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12429\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17512\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12800\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12611\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17501\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17103\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17102\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17100\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17101\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16401\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16402\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13810\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11105\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18001\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11404\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13807\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16912\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12651\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12900\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14300\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12001\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12109\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11927\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10402\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11935\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18505\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18504\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19005\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12433\"> &lt;Describe risk from not making this proposal&gt;\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_11405\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19008\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19009\"> </td>\r\n\t\t\t\t\t<td class=\"customfield_16500\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14006\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_14010\">\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12649\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12648\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12647\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13800\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10303\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17801\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10000\"></td>\r\n\t\t\t\t\t<td class=\"customfield_15301\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13202\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18500\"></td>\r\n\t\t\t\t\t<td class=\"customfield_19010\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10008\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12600\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11814\"></td>\r\n\t\t\t\t\t<td class=\"customfield_16701\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11200\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11106\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17300\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11108\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17402\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18502\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18503\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12644\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12638\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11406\"></td>\r\n\t\t\t\t\t<td class=\"customfield_14301\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18800\">0</td>\r\n\t\t\t\t\t<td class=\"customfield_13304\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13303\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13204\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13203\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11800\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10403\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13008\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17203\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17201\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17200\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17202\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17603\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12605\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17404\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11937\"></td>\r\n\t\t\t\t\t<td class=\"customfield_11832\"></td>\r\n\t\t\t\t\t<td class=\"customfield_10200\"></td>\r\n\t\t\t\t\t<td class=\"customfield_17500\"> <span title=\"30/May/23\"><time datetime=\"2023-05-30\">30/May/23</time></span>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12442\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12646\"></td>\r\n\t\t\t\t\t<td class=\"customfield_18601\"> No\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_12428\"></td>\r\n\t\t\t\t\t<td class=\"customfield_13102\">\r\n\t\t\t\t\t\t<script type=\"text/javascript\">\r\n\t\t\t\t\t\t\tsetTimeout(function () {\r\n\t\t\t\t\t\t\t\t$(\".warning_value_point\").remove();\r\n\t\t\t\t\t\t\t\tvar valuePointValue = $value;\r\n\t\t\t\t\t\t\t\tif (valuePointValue != undefined) {\r\n\t\t\t\t\t\t\t\t\tif (valuePointValue > 0) {\r\n\t\t\t\t\t\t\t\t\t\tvar timeSpent = jQuery(\"#tt_single_values_spent\").text();\r\n\t\t\t\t\t\t\t\t\t\tif (timeSpent == undefined || !timeSpent) {\r\n\t\t\t\t\t\t\t\t\t\t\t$(\"#rowFor\" + \"customfield_13102\").append(\"<div class='aui-message aui-message-warning'><p>Don't close this issue as it has not been logged work yet. All issues having Value Point must be logged work before being completed.</p></div>\");\r\n\t\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t\t\t\telse if (parseFloat(timeSpent) == 0) {\r\n\t\t\t\t\t\t\t\t\t\t\t$(\"#rowFor\" + \"customfield_13102\").append(\"<div class='aui-message aui-message-warning'><p>Don't close this issue as it has not been logged work yet. All issues having Value Point must be logged work before being completed.</p></div>\");\r\n\t\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t}, 1000);\r\n\t\t\t\t\t\t</script>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td class=\"customfield_14011\"></td>\r\n\t\t\t\t\t<td class=\"customfield_12615\"></td>\r\n\t\t\t\t</tr>";
             }
@@ -49,67 +50,36 @@ namespace be.Services
             file.FileContents = fileBytes;
             return file;
         }
-        public CustomFile ExportFileExcel(List<Issue> data)
+        public CustomFile ExportFileExcel(List<IssueDTO> data)
         {
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
             using (var package = new ExcelPackage("Template\\TemplateExcel.xlsx"))
             {
-                #region Header
                 var worksheet = package.Workbook.Worksheets["Sheet1"];
                 worksheet.Cells["A2"].Value = $"Displaying {data.Count} issues at {DateTime.Now}.";
-                //worksheet.Cells["A3"].Value = "Project";
-                //worksheet.Cells["B3"].Value = "Key";
-                //worksheet.Cells["C3"].Value = "Summary";
-                //worksheet.Cells["D3"].Value = "Issue Type";
-                //worksheet.Cells["E3"].Value = "Status";
-                //worksheet.Cells["F3"].Value = "Priority";
-                //worksheet.Cells["G3"].Value = "Resolution";
-                //worksheet.Cells["H3"].Value = "Assignee";
-                //worksheet.Cells["I3"].Value = "Reporter";
-                //worksheet.Cells["J3"].Value = "Creator";
-                //worksheet.Cells["K3"].Value = "Created";
-                //worksheet.Cells["L3"].Value = "Last Viewed";
-                //worksheet.Cells["M3"].Value = "Updated";
-                //worksheet.Cells["N3"].Value = "Component/s";
-                //worksheet.Cells["O3"].Value = "Description";
-                //worksheet.Cells["P3"].Value = "Security Level";
-                //worksheet.Cells["Q3"].Value = "Labels";
-                //worksheet.Cells["R3"].Value = "Description (Translated)";
-                //worksheet.Cells["S3"].Value = "Product";
-                //worksheet.Cells["T3"].Value = "QC Activity";
-                #endregion
                 for (int i = 1; i <= data.Count; i++)
                 {
                     var items = data[i - 1];
-                    string nameProject = _context.Projects.Where(x => x.ProjectId == data[i - 1].ProjectId).Select(x => x.ProjectName).FirstOrDefault();
-                    string nameIssueType = _context.IssueTypes.Where(x => x.IssueTypeId == data[i - 1].IssueTypeId).Select(x => x.IssueTypeName).FirstOrDefault();
-                    string nameStatusIssue = _context.StatusIssues.Where(x => x.StatusIssueId == data[i - 1].StatusIssueId).Select(x => x.StatusIssueName).FirstOrDefault();
-                    string namePriority = _context.Priorities.Where(x => x.PriorityId == data[i - 1].PriorityId).Select(x => x.PriorityName).FirstOrDefault();
-                    string nameAssignee = _context.Users.Where(x => x.UserId == data[i - 1].AssigneeId).Select(x => x.FullName).FirstOrDefault();
-                    string nameReporter = _context.Users.Where(x => x.UserId == data[i - 1].ReporterId).Select(x => x.FullName).FirstOrDefault();
-                    string nameQC = _context.Users.Where(x => x.UserId == data[i - 1].QcactivityId).Select(x => x.FullName).FirstOrDefault();
-                    string nameComponent = _context.Components.Where(x => x.ComponentId == data[i - 1].ComponentId).Select(x => x.ComponentName).FirstOrDefault();
-                    string nameProduct = _context.Products.Where(x => x.ProductId == data[i - 1].ProductId).Select(x => x.ProductName).FirstOrDefault();
-                    worksheet.Cells[$"A{3 + i}"].Value = nameProject;
+                    worksheet.Cells[$"A{3 + i}"].Value = items.ProjectName;
                     worksheet.Cells[$"B{3 + i}"].Value = items.IssueId;
                     worksheet.Cells[$"C{3 + i}"].Value = items.Summary;
-                    worksheet.Cells[$"D{3 + i}"].Value = nameIssueType;
-                    worksheet.Cells[$"E{3 + i}"].Value = nameStatusIssue;
-                    worksheet.Cells[$"F{3 + i}"].Value = namePriority;
-                    worksheet.Cells[$"G{3 + i}"].Value = "Resolution";
-                    worksheet.Cells[$"H{3 + i}"].Value = nameAssignee;
-                    worksheet.Cells[$"I{3 + i}"].Value = nameReporter;
-                    worksheet.Cells[$"J{3 + i}"].Value = nameReporter;
+                    worksheet.Cells[$"D{3 + i}"].Value = items.IssueTypeName;
+                    worksheet.Cells[$"E{3 + i}"].Value = items.StatusIssueName;
+                    worksheet.Cells[$"F{3 + i}"].Value = items.PriorityName;
+                    worksheet.Cells[$"G{3 + i}"].Value = items.Resolution;
+                    worksheet.Cells[$"H{3 + i}"].Value = items.AssigneeName;
+                    worksheet.Cells[$"I{3 + i}"].Value = items.ReporterName;
+                    worksheet.Cells[$"J{3 + i}"].Value = items.ReporterName;
                     worksheet.Cells[$"K{3 + i}"].Value = items.CreateTime;
                     worksheet.Cells[$"L{3 + i}"].Value = "Last Viewed";
                     worksheet.Cells[$"M{3 + i}"].Value = "Updated";
-                    worksheet.Cells[$"N{3 + i}"].Value = nameComponent;
+                    worksheet.Cells[$"N{3 + i}"].Value = items.ComponentName;
                     worksheet.Cells[$"O{3 + i}"].Value = items.Description;
                     worksheet.Cells[$"P{3 + i}"].Value = items.SecurityLevel;
                     worksheet.Cells[$"Q{3 + i}"].Value = items.Labels;
                     worksheet.Cells[$"R{3 + i}"].Value = items.DescriptionTranslate;
-                    worksheet.Cells[$"S{3 + i}"].Value = nameProduct;
-                    worksheet.Cells[$"T{3 + i}"].Value = nameQC;
+                    worksheet.Cells[$"S{3 + i}"].Value = items.ProductName;
+                    worksheet.Cells[$"T{3 + i}"].Value = items.QcactivityName;
                 }
                 var stream = new MemoryStream();
                 package.SaveAs(stream);
@@ -123,7 +93,7 @@ namespace be.Services
         }
         public CustomFile ExportFileWord(int id)
         {
-            var issue = _context.Issues.Find(id);
+            var issue = handleData.HandleDataIssue(mapper.Map<IssueDTO>(_context.Issues.Find(id)));
 
             // Save the document to a MemoryStream
             var stream = new MemoryStream();
@@ -146,22 +116,22 @@ namespace be.Services
             baoCao.MailMerge.Execute(new[] { "Name" }, new[] { issue.Summary });
             baoCao.MailMerge.Execute(new[] { "CreateAt" }, new[] { issue.CreateTime.ToString("dd/MM/yyyy") });
             baoCao.MailMerge.Execute(new[] { "UpdateAt" }, new[] { DateTime.Now.ToString("dd/MM/yyyy") });
-            baoCao.MailMerge.Execute(new[] { "Status" }, new[] { nameStatusIssue });
-            baoCao.MailMerge.Execute(new[] { "Project" }, new[] { nameProject });
-            baoCao.MailMerge.Execute(new[] { "Component" }, new[] { nameComponent });
+            baoCao.MailMerge.Execute(new[] { "Status" }, new[] { issue.StatusIssueName });
+            baoCao.MailMerge.Execute(new[] { "Project" }, new[] { issue.ProjectName });
+            baoCao.MailMerge.Execute(new[] { "Component" }, new[] { issue.ComponentName });
             baoCao.MailMerge.Execute(new[] { "Security" }, new[] { issue.SecurityLevel });
-            baoCao.MailMerge.Execute(new[] { "Type" }, new[] { nameIssueType });
-            baoCao.MailMerge.Execute(new[] { "Priority" }, new[] { namePriority });
-            baoCao.MailMerge.Execute(new[] { "Reporter" }, new[] { nameReporter });
-            baoCao.MailMerge.Execute(new[] { "Assignee" }, new[] { nameAssignee });
+            baoCao.MailMerge.Execute(new[] { "Type" }, new[] { issue.IssueTypeName });
+            baoCao.MailMerge.Execute(new[] { "Priority" }, new[] { issue.PriorityName });
+            baoCao.MailMerge.Execute(new[] { "Reporter" }, new[] { issue.ReporterName });
+            baoCao.MailMerge.Execute(new[] { "Assignee" }, new[] { issue.AssigneeName });
             baoCao.MailMerge.Execute(new[] { "Labels" }, new[] { issue.Labels });
-            baoCao.MailMerge.Execute(new[] { "Product" }, new[] { nameProduct });
-            baoCao.MailMerge.Execute(new[] { "DefectOrigin" }, new[] { nameDefectOrigin });
-            baoCao.MailMerge.Execute(new[] { "QC" }, new[] { nameQC });
+            baoCao.MailMerge.Execute(new[] { "Product" }, new[] { issue.ProductName });
+            baoCao.MailMerge.Execute(new[] { "DefectOrigin" }, new[] { issue.DefectOriginName });
+            baoCao.MailMerge.Execute(new[] { "QC" }, new[] { issue.QcactivityName });
             baoCao.MailMerge.Execute(new[] { "CauseAnalysis" }, new[] { issue.CauseAnalysis });
             baoCao.MailMerge.Execute(new[] { "CorrectiveAction" }, new[] { issue.CorrectAction });
-            baoCao.MailMerge.Execute(new[] { "DefectType" }, new[] { nameDefectType });
-            baoCao.MailMerge.Execute(new[] { "CauseCategory" }, new[] { nameCauseCategory });
+            baoCao.MailMerge.Execute(new[] { "DefectType" }, new[] { issue.DefectTypeName });
+            baoCao.MailMerge.Execute(new[] { "CauseCategory" }, new[] { issue.CauseCategoryName });
             baoCao.MailMerge.Execute(new[] { "Description" }, new[] { issue.Description });
             stream.Position = 0;
             baoCao.Save("Template\\Result.docx");

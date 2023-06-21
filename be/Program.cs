@@ -1,5 +1,7 @@
 using be.Models;
+using be.Repositories.ExportRepository;
 using be.Repositories.IssueRepository;
+using be.Services.ExportService;
 using be.Services.IssueService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -30,7 +32,9 @@ builder.Services.AddCors();
 var services = builder.Services;
 
 services.AddScoped<IExportRepository, ExportRepository>();
-services.AddScoped<IExportService, IssueService>();
+services.AddScoped<IExportService, ExportService>();
+services.AddScoped<IIssueRepository, IssueRepository>();
+services.AddScoped<IIssueService, IssueService>();
 
 var app = builder.Build();
 

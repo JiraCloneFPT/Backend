@@ -1,17 +1,18 @@
 ﻿using be.DTOs;
 using be.Models;
 using be.Repositories.IssueRepository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace be.Services.IssueService
 {
     /// <summary>
     /// Issue Service
     /// </summary>
-    public class IssueService : IExportService
+    public class IssueService : IIssueService
     {
-        private readonly IExportRepository _issueRepository;
+        private readonly IIssueRepository _issueRepository;
 
-        public IssueService(IExportRepository issueRepository)
+        public IssueService(IIssueRepository issueRepository)
         {
             _issueRepository = issueRepository;
         }
@@ -83,18 +84,10 @@ namespace be.Services.IssueService
             }
         }
 
-<<<<<<< HEAD
         public async Task<object> GetElement(int id)
         {
             return await _issueRepository.GetElement(id);
         }
-
-        public async Task<object> GetElementsByIdUser(int idUser , int idComponent)
-        {
-            return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
-        }
-=======
->>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
 
         // Get Items Create Issue
         public async Task<ResponseDTO> GetItemsIssue()
@@ -130,7 +123,18 @@ namespace be.Services.IssueService
             }
         }
 
-
+        public async Task<object> MyOpenIssue(int idUser)
+        {
+            return await _issueRepository.MyOpenIssue(idUser);
+        }
+        public async Task<object> ReportByMe(int idUser)
+        {
+            return await _issueRepository.ReportByMe(idUser);
+        }
+        public async Task<object> AllIssue(int idUser)
+        {
+            return await _issueRepository.AllIssue(idUser);
+        }
 
     }
 }

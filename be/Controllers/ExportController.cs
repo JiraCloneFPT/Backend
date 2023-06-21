@@ -14,6 +14,10 @@ using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
 using Aspose.Words.XAttr;
 using be.Services;
+using be.Services.ExportService;
+using AutoMapper;
+using be.Helpers;
+using be.DTOs;
 
 namespace be.Controllers
 {
@@ -24,29 +28,21 @@ namespace be.Controllers
     [ApiController]
     public class ExportController : ControllerBase
     {
-        private readonly ExportService Export;
+        private readonly IExportService exportService;
         private readonly DbJiraCloneContext _context;
-        public ExportController(DbJiraCloneContext db)
+        public ExportController(DbJiraCloneContext db, IExportService export)
         {
             _context = db;
-            Export = new ExportService();
+            exportService = export;
         }
         // Export list data by html file
         [HttpPost("list/html")]
-        public async Task<ActionResult> ExportHtmlList([FromBody] List<int> listIdData)
+        public async Task<ActionResult> ExportHtmlList([FromBody] List<IssueDTO> listIdData)
         {
             try
             {
-                var data = new List<Issue>();
-                foreach (int id in listIdData)
-                {
-                    var _data = await _context.Issues.FindAsync(id);
-                    if (_data != null)
-                    {
-                        data.Add(_data);
-                    }
-                }
-                var result = Export.ExportFileHtml(data);
+                
+                var result = exportService.ExportFileHtml(listIdData);
 
                 return File(result.FileContents, result.ContentType, result.FileName);
             }
@@ -57,20 +53,11 @@ namespace be.Controllers
         }
         // Export list data by excel file
         [HttpPost("list/excel")]
-        public ActionResult ExportExcelList([FromBody] List<int> listIdData)
+        public ActionResult ExportExcelList([FromBody] List<IssueDTO> listIdData)
         {
             try
             {
-                var data = new List<Issue>();
-                foreach (int id in listIdData)
-                {
-                    var _data = _context.Issues.Find(id);
-                    if (_data != null)
-                    {
-                        data.Add(_data);
-                    }
-                }
-                var result = Export.ExportFileExcel(data);
+                var result = exportService.ExportFileExcel(listIdData);
                 return File(result.FileContentsStream, result.ContentType, result.FileName);
             }
             catch
@@ -84,7 +71,7 @@ namespace be.Controllers
         {
             try
             {
-                var result = Export.ExportFileWord(id);
+                var result = exportService.ExportFileWord(id);
                 return File(result.FileContents, result.ContentType, result.FileName);
             }
             catch
