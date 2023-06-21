@@ -1,15 +1,8 @@
 ﻿using be.DTOs;
 using be.Models;
 using be.Repositories.IssueRepository;
-<<<<<<< HEAD
-using Microsoft.AspNetCore.Mvc;
-=======
 using be.Services.OtherService;
 using be.Services.UserService;
-using MailKit;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
 
 namespace be.Services.IssueService
 {
@@ -20,15 +13,10 @@ namespace be.Services.IssueService
     {
         private readonly IIssueRepository _issueRepository;
 
-<<<<<<< HEAD
-        public IssueService(IIssueRepository issueRepository)
-=======
-
         private readonly IUserService _userService; 
 
 
         public IssueService(IIssueRepository issueRepository, IUserService userService)
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         {
             _issueRepository = issueRepository;
 
@@ -68,11 +56,6 @@ namespace be.Services.IssueService
                 };
             }
         }
-
-            
-        
-      
-
         // Get issue by id
         public async Task<ResponseDTO> GetIssueById(int id)
         {
@@ -145,24 +128,10 @@ namespace be.Services.IssueService
                 };
             }
         }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         public async Task<object> GetElement(int id)
         {
             return await _issueRepository.GetElement(id);
         }
-
-<<<<<<< HEAD
-=======
-        public async Task<object> GetElementsByIdUser(int idUser , int idComponent)
-        {
-            return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
-        }
-
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         // Get Items Create Issue
         public async Task<ResponseDTO> GetItemsIssue()
         {
@@ -197,7 +166,6 @@ namespace be.Services.IssueService
             }
         }
 
-<<<<<<< HEAD
         public async Task<object> MyOpenIssue(int idUser)
         {
             return await _issueRepository.MyOpenIssue(idUser);
@@ -210,12 +178,9 @@ namespace be.Services.IssueService
         {
             return await _issueRepository.AllIssue(idUser);
         }
-
-=======
         public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
         {
             return _issueRepository.GetAllIssueByUserId(userId);
         }
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
     }
 }

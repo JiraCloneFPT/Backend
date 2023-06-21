@@ -22,19 +22,15 @@ namespace be.Repositories.IssueRepository
     /// </summary> 
     public class IssueRepository : BaseRepository<Issue>, IIssueRepository
     {
-<<<<<<< HEAD
         private readonly HandleData handleData;
         private readonly Mapper mapper;
-        public IssueRepository(DbJiraCloneContext context) : base(context)
-        {
-            mapper = MapperConfig.InitializeAutomapper();
-            handleData = new HandleData();
-=======
         private readonly IWebHostEnvironment _webHostEnvironment;
         public IssueRepository(DbJiraCloneContext context, IWebHostEnvironment webHostEnvironment) : base(context)
         {
             _webHostEnvironment = webHostEnvironment;
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
+            mapper = MapperConfig.InitializeAutomapper();
+            handleData = new HandleData();
+
         }
 
         public async Task<bool> AddFile(IFormFile file, Issue issue)
@@ -219,15 +215,8 @@ namespace be.Repositories.IssueRepository
                 Labels = enumCommon.Labels,
                 Sprints = enumCommon.Sprints,
                 FunctionCategories = enumCommon.FunctionCategories,
-<<<<<<< HEAD
-                // not match // Maybe match with Issue1 in model 
                 LinkedIssues = enumCommon.LinkedIssues,
                 //Issues = context.Issues.Select(e => new Issue { IssueId = e.IssueId, Summary = e.Summary }).Take(10).ToList(),
-=======
-                
-                LinkedIssues = enumCommon.LinkedIssues, // not match // Maybe match with issue entity 
-                Issues = context.Issues.Select(e => new Issue { IssueId = e.IssueId, Summary = e.Summary }).Take(10).ToList(),
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
                 EpicLinks = enumCommon.EpicLinks,
                 SecurityLevels = enumCommon.SecurityLevels,
                 DefectTypes = context.DefectTypes.Select(e => new DefectType { DefectTypeId = e.DefectTypeId, DefectTypeName = e.DefectTypeName }).Take(10).ToList(),
@@ -295,15 +284,11 @@ namespace be.Repositories.IssueRepository
             };
         }
 
-<<<<<<< HEAD
+
         public async Task<object> MyOpenIssue(int idUser)
-=======
-        //Get items Issue by idUser 
-        public async Task<Object> GetElementsByIdUser(int idUser, int idComponent)
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         {
             var statustype = await context.StatusIssues.Where(x => x.StatusIssueName.Equals("Open")).FirstOrDefaultAsync();
-            var data = await context.Issues.Where(x => x.AssigneeId == idUser || x.ReporterId == idUser).Where(x => x.StatusIssueId == statustype.StatusIssueId).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
+            var data = await context.Issues.Where(x => x.AssigneeId == idUser || x.ReporterId == idUser).Where(x => x.StatusIssueId == statustype.StatusIssueId).OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
             return new
             {
                 status = 200,
@@ -312,7 +297,7 @@ namespace be.Repositories.IssueRepository
         }
         public async Task<object> ReportByMe(int idUser)
         {
-            var data = await context.Issues.Where(x => x.ReporterId == idUser).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
+            var data = await context.Issues.Where(x => x.ReporterId == idUser).OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
             return new
             {
                 status = 200,
@@ -321,16 +306,16 @@ namespace be.Repositories.IssueRepository
         }
         public async Task<object> AllIssue(int idUser)
         {
-            var data = await context.Issues.Where(x => x.ReporterId == idUser || x.AssigneeId == idUser).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
+            var data = await context.Issues.Where(x => x.ReporterId == idUser || x.AssigneeId == idUser).OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
             return new
             {
                 status = 200,
                 data
             };
         }
-<<<<<<< HEAD
-=======
-
+        
+        
+        
         public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
         {
 
@@ -347,7 +332,6 @@ namespace be.Repositories.IssueRepository
                             }).Take(50).ToList();
             return result;
         }
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
     }
 
 

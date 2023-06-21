@@ -18,22 +18,15 @@ namespace be.Repositories.IssueRepository
         // Get Items select list to Create Issue
         Task<ListItemsOfIssueDTO> GetItemsIssue();
         // Create Issue
-<<<<<<< HEAD
-        Task<bool> CreateIssue(IssueCreateDTO issue);
+
+        Task<Issue> CreateIssue(IssueCreateDTO issue);
+
+
         Task<object> GetElement(int id);
+        //Phần của Huy
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId);
         Task<object> AllIssue(int idUser);
         Task<object> MyOpenIssue(int idUser);
         Task<object> ReportByMe(int idUser);
-=======
-
-        Task<Issue> CreateIssue(IssueCreateDTO issue);
-      
-
-        Task<object> GetElement(int id);
-        Task<object> GetElementsByIdUser(int idUser, int idComponent);
-
-        //Phần của Huy
-        public IList<ShortDesIssue> GetAllIssueByUserId(int userId);
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
     }
 }

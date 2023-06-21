@@ -10,8 +10,8 @@ namespace be.Services.ExportService
     /// </summary>
     public interface IExportService
     {
-        public CustomFile ExportFileHtml(List<int> listIdData);
-        public CustomFile ExportFileExcel(List<int> listIdData);
+        public CustomFile ExportFileHtml(List<IssueDTO> listIdData);
+        public CustomFile ExportFileExcel(List<IssueDTO> listIdData);
         public CustomFile ExportFileWord(int id);
     }
 }

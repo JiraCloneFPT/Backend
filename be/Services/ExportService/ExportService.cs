@@ -15,11 +15,11 @@ namespace be.Services.ExportService
             _exportRepository = issueRepository;
         }
 
-        public CustomFile ExportFileHtml(List<int> data)
+        public CustomFile ExportFileHtml(List<IssueDTO> data)
         {
             return _exportRepository.ExportFileHtml(data);
         }
-        public CustomFile ExportFileExcel(List<int> data)
+        public CustomFile ExportFileExcel(List<IssueDTO> data)
         {
             return (_exportRepository.ExportFileExcel(data));
         }

@@ -20,26 +20,20 @@ namespace be.Controllers
     public class IssueController : ControllerBase
     {
         private readonly IIssueService _issueService;
-<<<<<<< HEAD
         private readonly Mapper mapper;
         private readonly HandleData handleData;
         private readonly DbJiraCloneContext _context;
-=======
-        private readonly DbJiraCloneContext _context;
 
         private readonly IUserService _userService;
-      
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
+
         public IssueController(DbJiraCloneContext db, IIssueService issueService)
         {
             mapper = MapperConfig.InitializeAutomapper();
             _context = db;
             _issueService = issueService;
-<<<<<<< HEAD
             handleData = new HandleData();
-=======
             _userService = new UserService();
-           
+
         }
 
         // Edit Issue
@@ -59,7 +53,6 @@ namespace be.Controllers
             {
                 throw ex;
             }
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         }
 
         // Get issue by id 
@@ -88,7 +81,7 @@ namespace be.Controllers
                     return BadRequest();
                 }
                 var resData = await _issueService.CreateIssue(issue);
-                
+
                 return Ok(resData);
             }
             catch (Exception ex)
@@ -99,7 +92,7 @@ namespace be.Controllers
 
         // Create Issue
         [HttpPost("addWithFile")]
-        public async Task<ActionResult> addWithFile([FromForm]IssueCreateDTO issue)
+        public async Task<ActionResult> addWithFile([FromForm] IssueCreateDTO issue)
         {
             try
             {
@@ -195,10 +188,19 @@ namespace be.Controllers
                 });
             }
         }
-
-<<<<<<< HEAD
-
-
+        [HttpGet("GetAllIsseByUserId")]
+        public ActionResult GetAllIsseByUserId(int userId)
+        {
+            try
+            {
+                var issueList = _issueService.GetAllIssueByUserId(userId);
+                return Ok(issueList);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
 
         #region HIEUVM15
 
@@ -209,23 +211,13 @@ namespace be.Controllers
             {
                 var result = await _issueService.MyOpenIssue(idUser);
                 return Ok(result);
-=======
-        //Phần của Huy
-        [HttpGet("GetAllIsseByUserId")]
-        public ActionResult GetAllIsseByUserId(int userId)
-        {
-            try
-            {
-                var issueList = _issueService.GetAllIssueByUserId(userId);
-                return Ok(issueList);
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
             }
+
             catch
             {
                 return BadRequest();
             }
         }
-<<<<<<< HEAD
         [HttpGet("reportbyme")]
         public async Task<ActionResult<IEnumerable<IssueDTO>>> ReportByMe(int idUser)
         {
@@ -253,7 +245,5 @@ namespace be.Controllers
             }
         }
         #endregion
-=======
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
     }
 }
