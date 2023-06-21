@@ -1,7 +1,13 @@
 using be.Models;
+using be.Repositories.ComponentRepository;
+using be.Repositories.IProjectRepositoty;
 using be.Repositories.IssueRepository;
+using be.Repositories.ProductRepository;
 using be.Repositories.UserRepository;
+using be.Services.ComponentService;
 using be.Services.IssueService;
+using be.Services.ProductService;
+using be.Services.ProjectService;
 using be.Services.UserService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -40,6 +46,18 @@ services.AddScoped<IUserService, UserService>();
 services.AddScoped<IExportRepository, ExportRepository>();
 services.AddScoped<IExportService, IssueService>();
 >>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IComponentService, ComponentService>();
+builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 var app = builder.Build();
 

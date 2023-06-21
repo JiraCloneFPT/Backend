@@ -181,5 +181,20 @@ namespace be.Controllers
                 });
             }
         }
+
+        //Phần của Huy
+        [HttpGet("GetAllIsseByUserId")]
+        public ActionResult GetAllIsseByUserId(int userId)
+        {
+            try
+            {
+                var issueList = _issueService.GetAllIssueByUserId(userId);
+                return Ok(issueList);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

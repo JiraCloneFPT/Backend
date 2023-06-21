@@ -30,14 +30,19 @@ namespace be.Services.OtherService
             {
                 // With type == 1, reset password
                 // With type == 2, send password
+                // With type == 3, update account
                 string _text = "";
                 if (type == 1)
                 {
                     _text = EmailHelper.Instance.BodyReset(password);
                 }
-                else
+                if (type == 2)
                 {
                     _text = EmailHelper.Instance.Body(fullname, account, password);
+                }
+                if (type == 3)
+                {
+                    _text = EmailHelper.Instance.BodyUpdate(fullname, account, password);
                 }
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse("jira.service.fpt@gmail.com"));

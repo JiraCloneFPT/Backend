@@ -14,16 +14,13 @@ namespace be.Services.IssueService
     {
         private readonly IExportRepository _issueRepository;
 
-<<<<<<< HEAD
-       
 
         private readonly IUserService _userService; 
 
 
         public IssueService(IIssueRepository issueRepository, IUserService userService)
-=======
+
         public IssueService(IExportRepository issueRepository)
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
         {
             _issueRepository = issueRepository;
             _userService = userService;
@@ -104,14 +101,11 @@ namespace be.Services.IssueService
             }
         }
 
-<<<<<<< HEAD
         public void SendEmailCreateIssue()
         {
 
         }
 
-=======
-<<<<<<< HEAD
         public async Task<object> GetElement(int id)
         {
             return await _issueRepository.GetElement(id);
@@ -121,9 +115,6 @@ namespace be.Services.IssueService
         {
             return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
         }
-=======
->>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
 
         // Get Items Create Issue
         public async Task<ResponseDTO> GetItemsIssue()
@@ -159,7 +150,9 @@ namespace be.Services.IssueService
             }
         }
 
-
-
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
+        {
+            return _issueRepository.GetAllIssueByUserId(userId);
+        }
     }
 }

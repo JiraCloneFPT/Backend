@@ -9,6 +9,8 @@ public partial class Project
 
     public string? ProjectName { get; set; }
 
+    public string? ShortName { get; set; }
+
     public bool? Status { get; set; }
 
     public virtual ICollection<Issue> Issues { get; set; } = new List<Issue>();
