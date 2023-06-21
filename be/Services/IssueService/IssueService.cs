@@ -4,6 +4,8 @@ using be.Repositories.IssueRepository;
 using be.Services.OtherService;
 using be.Services.UserService;
 using MailKit;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace be.Services.IssueService
 {
@@ -14,16 +16,53 @@ namespace be.Services.IssueService
     {
         private readonly IIssueRepository _issueRepository;
 
+
         private readonly IUserService _userService; 
 
 
         public IssueService(IIssueRepository issueRepository, IUserService userService)
-
         {
             _issueRepository = issueRepository;
+
             _userService = userService;
+        }
+
+        // Edit issue
+        public async Task<ResponseDTO> EditIssue(IssueCreateDTO issue)
+        {
+            try
+            {
+                var issueEdited = await _issueRepository.EditIssue(issue);
+                if (issueEdited == null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Edit Issue Failed!"
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Edit Issue Success!",
+                        data = issueEdited
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
             
-        } 
+        
       
 
         // Get issue by id
@@ -66,10 +105,10 @@ namespace be.Services.IssueService
             try
             {
                 var result = await _issueRepository.CreateIssue(issue);
-                //if (issue.AttachFile != null)
-                //{
-                //    await _issueRepository.AddFile(issue.AttachFile, result);
-                //}
+                if(issue.AttachFile != null)
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, result);
+                }    
                 if (result == null)
                 {
                     return new ResponseDTO
@@ -110,7 +149,6 @@ namespace be.Services.IssueService
             return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
         }
 
-
         // Get Items Create Issue
         public async Task<ResponseDTO> GetItemsIssue()
         {
@@ -145,7 +183,9 @@ namespace be.Services.IssueService
             }
         }
 
-
-
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
+        {
+            return _issueRepository.GetAllIssueByUserId(userId);
+        }
     }
 }

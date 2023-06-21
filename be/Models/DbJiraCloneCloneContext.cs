@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace be.Models;
 
-public partial class DbJiraCloneContext : DbContext
+public partial class DbJiraCloneCloneContext : DbContext
 {
-    public DbJiraCloneContext()
+    public DbJiraCloneCloneContext()
     {
     }
 
-    public DbJiraCloneContext(DbContextOptions<DbJiraCloneContext> options)
+    public DbJiraCloneCloneContext(DbContextOptions<DbJiraCloneCloneContext> options)
         : base(options)
     {
     }
@@ -57,7 +57,7 @@ public partial class DbJiraCloneContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-B9LVRBH\\SQLEXPRESS;Initial Catalog=dbJiraClone_clone;Integrated Security=True;encrypt=false");
+        => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=dbJiraClone_clone;Integrated Security=True; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -371,6 +371,9 @@ public partial class DbJiraCloneContext : DbContext
             entity.ToTable("Project");
 
             entity.Property(e => e.ProjectName).HasMaxLength(255);
+            entity.Property(e => e.ShortName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Qcactivity>(entity =>

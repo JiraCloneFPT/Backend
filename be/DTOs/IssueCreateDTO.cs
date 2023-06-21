@@ -2,6 +2,8 @@
 {
     public class IssueCreateDTO
     {
+        public int? IssueId { get; set; }
+
         public int? ProjectId { get; set; }
 
         public int? IssueTypeId { get; set; }
@@ -95,6 +97,8 @@
         public int? StatusIssueId { get; set; }
 
         public DateTime? CreateTime { get; set; }
+
+        public IFormFile? AttachFile { get; set; }
 
     }
 }

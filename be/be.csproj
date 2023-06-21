@@ -25,9 +25,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.6" />
   </ItemGroup>
 
-
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="wwwroot\AttachFiles\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,7 +35,5 @@
       <HintPath>Template\Aspose.Words.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-
 
 </Project>
