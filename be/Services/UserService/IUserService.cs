@@ -12,6 +12,8 @@ namespace be.Services.UserService
         public string ReplaceVietnameseCharacters(string text);
         public string GenerateRandomString();
 
+        public User GetUserById(int id);
+
         //Phan Cua Huy
         object AddUser(User user);
         IList<string> GetAllEmailUser();

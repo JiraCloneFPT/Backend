@@ -14,9 +14,9 @@ namespace be.Controllers
     [ApiController]
     public class HistoryController : ControllerBase
     {
-        private readonly IExportService _issueService;
+        private readonly IIssueService _issueService;
         private readonly DbJiraCloneContext _context;
-        public HistoryController(DbJiraCloneContext db, IExportService issueService)
+        public HistoryController(DbJiraCloneContext db, IIssueService issueService)
         {
             _context = db;
             _issueService = issueService;

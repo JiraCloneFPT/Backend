@@ -17,20 +17,36 @@ namespace be.Controllers
     [ApiController]
     public class IssueController : ControllerBase
     {
-        private readonly IExportService _issueService;
+        private readonly IIssueService _issueService;
         private readonly DbJiraCloneContext _context;
-<<<<<<< HEAD
+
         private readonly IUserService _userService;
       
         public IssueController(DbJiraCloneContext db, IIssueService issueService)
-=======
-        public IssueController(DbJiraCloneContext db, IExportService issueService)
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
         {
             _context = db;
             _issueService = issueService;
             _userService = new UserService();
            
+        }
+
+        // Edit Issue
+        [HttpPost("edit")]
+        public async Task<ActionResult> Edit([FromBody] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.EditIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         // Get issue by id 
@@ -60,6 +76,25 @@ namespace be.Controllers
                 }
                 var resData = await _issueService.CreateIssue(issue);
                 
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // Create Issue
+        [HttpPost("addWithFile")]
+        public async Task<ActionResult> addWithFile([FromForm]IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.CreateIssue(issue);
                 return Ok(resData);
             }
             catch (Exception ex)
@@ -127,27 +162,6 @@ namespace be.Controllers
             }
         }
 
-        [HttpPut("edit")]
-
-        public async Task<ActionResult> Edit([FromBody] Issue issue)
-        {
-            var element = await _context.Issues.FindAsync(issue.IssueId);
-            if (element == null)
-            {
-                return Ok(new
-                {
-                    message = "The issue doesn't exist in database!",
-                    status = 400
-                });
-            }
-            _context.Entry(await _context.Issues.FirstOrDefaultAsync(x => x.IssueId == element.IssueId)).CurrentValues.SetValues(issue);
-            await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                message = "Edit issue success!",
-                status = 200
-            });
-        }
         [HttpDelete("delete")]
 
         public async Task<ActionResult> Delete([FromBody] int id)

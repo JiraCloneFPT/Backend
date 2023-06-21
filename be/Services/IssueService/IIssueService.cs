@@ -6,8 +6,11 @@ namespace be.Services.IssueService
     /// <summary>
     /// Interface Issue Service
     /// </summary>
-    public interface IExportService
+    public interface IIssueService
     {
+        // Edit issue
+        Task<ResponseDTO> EditIssue(IssueCreateDTO issue);
+
         // Get Items select list to Create Issue
         Task<ResponseDTO> GetItemsIssue();
 
