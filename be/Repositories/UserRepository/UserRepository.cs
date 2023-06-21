@@ -23,6 +23,13 @@ namespace be.Repositories.UserRepository
         public object AddUser(User user)
         {
 
+        public User GetUserById(int id)
+        {
+            return _context.Users.FirstOrDefault(user => user.UserId == id);
+        }
+
+        public void AddUser(User user)
+        {
             var account = GenerateAccount(user.FullName);
             user.AccountName = ReplaceVietnameseCharacters(account);
             user.Status = "1";

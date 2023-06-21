@@ -1,6 +1,9 @@
 ﻿using be.DTOs;
 using be.Models;
 using be.Repositories.IssueRepository;
+using be.Services.OtherService;
+using be.Services.UserService;
+using MailKit;
 
 namespace be.Services.IssueService
 {
@@ -11,10 +14,19 @@ namespace be.Services.IssueService
     {
         private readonly IExportRepository _issueRepository;
 
+
+        private readonly IUserService _userService; 
+
+
+        public IssueService(IIssueRepository issueRepository, IUserService userService)
+
         public IssueService(IExportRepository issueRepository)
         {
             _issueRepository = issueRepository;
-        }
+            _userService = userService;
+            
+        } 
+      
 
         // Get issue by id
         public async Task<ResponseDTO> GetIssueById(int id)
@@ -55,8 +67,12 @@ namespace be.Services.IssueService
         {
             try
             {
-                var isCreated = await _issueRepository.CreateIssue(issue);
-                if (isCreated == false)
+                var result = await _issueRepository.CreateIssue(issue);
+                //if (issue.AttachFile != null)
+                //{
+                //    await _issueRepository.AddFile(issue.AttachFile, result);
+                //}
+                if (result == null)
                 {
                     return new ResponseDTO
                     {
@@ -66,6 +82,8 @@ namespace be.Services.IssueService
                 }
                 else
                 {
+                    User assignee = _userService.GetUserById(issue.AssigneeId.Value); 
+                    EmailService.Instance.SendMailCreate(result, assignee); 
                     return new ResponseDTO
                     {
                         code = 200,
@@ -81,6 +99,11 @@ namespace be.Services.IssueService
                     message = ex.Message
                 };
             }
+        }
+
+        public void SendEmailCreateIssue()
+        {
+
         }
 
         public async Task<object> GetElement(int id)

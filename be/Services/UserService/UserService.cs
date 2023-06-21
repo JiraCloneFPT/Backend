@@ -75,5 +75,10 @@ namespace be.Services.UserService
             User updateUser = _userRepository.GetUserInformation(user.UserId);
             return updateUser;
         }
+
+        public User GetUserById(int id)
+        {
+            return _userRepository.GetUserById(id); 
+        }
     }
 }

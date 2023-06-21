@@ -9,10 +9,7 @@ namespace be.Services.UserService
 
         public string GenerateAccount(string fullName);
         public string RemoveAccents(string input);
-
         public string ReplaceVietnameseCharacters(string text);
-
-
         public string GenerateRandomString();
 
         //Phan Cua Huy

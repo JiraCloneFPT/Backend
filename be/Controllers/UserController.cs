@@ -11,7 +11,7 @@ namespace be.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly UserService _userService;
 
         private readonly EmailService _emailService;
         private readonly IConfiguration _configuration;
@@ -52,7 +52,7 @@ namespace be.Controllers
                 user.Comments = (ICollection<Comment>)comment;
                 user.RoleId = 1;
 
-                //await Task.Run(() => _userService.AddUser(user));
+                await Task.Run(() => _userService.AddUser(user));
                 //await _userService.AddUser(user);
                 _emailService.SendMail(user.Email, 2, user.FullName, user.AccountName, user.Password);
             }
@@ -79,7 +79,7 @@ namespace be.Controllers
                 user.RoleId = 1;
 
                 //await Task.Run(() => _userService.AddUser(user));
-                //_userService.AddUser(user);
+                _userService.AddUser(user);
                 _emailService.SendMail(user.Email, 2, user.FullName, user.AccountName, user.Password);
             }
 

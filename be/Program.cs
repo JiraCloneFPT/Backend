@@ -37,8 +37,15 @@ builder.Services.AddCors();
 
 var services = builder.Services;
 
+<<<<<<< HEAD
+services.AddScoped<IIssueRepository, IssueRepository>();
+services.AddScoped<IIssueService, IssueService>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IUserService, UserService>();
+=======
 services.AddScoped<IExportRepository, ExportRepository>();
 services.AddScoped<IExportService, IssueService>();
+>>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
