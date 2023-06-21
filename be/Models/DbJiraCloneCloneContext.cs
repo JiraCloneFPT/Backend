@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace be.Models;
 
-public partial class DbJiraCloneContext : DbContext
+public partial class DbJiraCloneCloneContext : DbContext
 {
-    public DbJiraCloneContext()
+    public DbJiraCloneCloneContext()
     {
     }
 
-    public DbJiraCloneContext(DbContextOptions<DbJiraCloneContext> options)
+    public DbJiraCloneCloneContext(DbContextOptions<DbJiraCloneCloneContext> options)
         : base(options)
     {
     }
@@ -57,11 +57,7 @@ public partial class DbJiraCloneContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-<<<<<<< HEAD
-        => optionsBuilder.UseSqlServer("Data Source=Admin;Initial Catalog=dbJiraClone;Integrated Security=True;encrypt=false");
-=======
-        => optionsBuilder.UseSqlServer("Data Source=NGUYENHUNGPHU\\SQLEXPRESS;Initial Catalog=dbJiraClone;Integrated Security=True;encrypt=false");
->>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
+        => optionsBuilder.UseSqlServer("Data Source=NGUYENHUNGPHU\\SQLEXPRESS;Initial Catalog=dbJiraClone;Integrated Security=True; TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -179,9 +175,6 @@ public partial class DbJiraCloneContext : DbContext
             entity.Property(e => e.RemainingEstimate)
                 .HasMaxLength(55)
                 .IsUnicode(false);
-            entity.Property(e => e.Resolution)
-                .HasMaxLength(255)
-                .IsUnicode(false);
             entity.Property(e => e.SecurityLevel)
                 .HasMaxLength(55)
                 .IsUnicode(false);
@@ -257,9 +250,6 @@ public partial class DbJiraCloneContext : DbContext
             entity.Property(e => e.QcactivityId).HasColumnName("QCActivityId");
             entity.Property(e => e.RemaningEstimate)
                 .HasMaxLength(55)
-                .IsUnicode(false);
-            entity.Property(e => e.Resolution)
-                .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.SecurityLevel)
                 .HasMaxLength(55)
@@ -381,6 +371,9 @@ public partial class DbJiraCloneContext : DbContext
             entity.ToTable("Project");
 
             entity.Property(e => e.ProjectName).HasMaxLength(255);
+            entity.Property(e => e.ShortName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Qcactivity>(entity =>

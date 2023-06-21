@@ -1,8 +1,22 @@
 using be.Models;
+<<<<<<< HEAD
 using be.Repositories.ExportRepository;
 using be.Repositories.IssueRepository;
 using be.Services.ExportService;
+=======
+using be.Repositories.BaseRepository;
+using be.Repositories.ComponentRepository;
+using be.Repositories.IProjectRepositoty;
+using be.Repositories.IssueRepository;
+using be.Repositories.ProductRepository;
+using be.Repositories.UserRepository;
+using be.Services;
+using be.Services.ComponentService;
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
 using be.Services.IssueService;
+using be.Services.ProductService;
+using be.Services.ProjectService;
+using be.Services.UserService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -31,10 +45,34 @@ builder.Services.AddCors();
 
 var services = builder.Services;
 
+<<<<<<< HEAD
 services.AddScoped<IExportRepository, ExportRepository>();
 services.AddScoped<IExportService, ExportService>();
 services.AddScoped<IIssueRepository, IssueRepository>();
 services.AddScoped<IIssueService, IssueService>();
+=======
+services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+services.AddScoped<IIssueRepository, IssueRepository>();
+services.AddScoped<IIssueService, IssueService>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IUserService, UserService>();
+
+//services.AddScoped<IExportRepository, ExportRepository>();
+//services.AddScoped<IExportService, ExportService>();
+
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IComponentService, ComponentService>();
+builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
 
 var app = builder.Build();
 

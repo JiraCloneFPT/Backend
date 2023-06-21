@@ -2,6 +2,8 @@
 using be.Services.OtherService;
 using be.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using be.DTOs;
 
 namespace be.Controllers
 {
@@ -11,12 +13,14 @@ namespace be.Controllers
     {
         private readonly IUserService _userService;
 
-        private readonly EmailService _emailService; 
+        private readonly EmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public UserController()
+        public UserController(IConfiguration configuration, IUserService userService)
         {
-            _userService= new UserService();
+            _userService = userService;
             _emailService = new EmailService();
+            _configuration = configuration;
         }
 
         [HttpGet("all")]
@@ -48,7 +52,7 @@ namespace be.Controllers
                 user.Comments = (ICollection<Comment>)comment;
                 user.RoleId = 1;
 
-                //await Task.Run(() => _userService.AddUser(user));
+                await Task.Run(() => _userService.AddUser(user));
                 //await _userService.AddUser(user);
                 _emailService.SendMail(user.Email, 2, user.FullName, user.AccountName, user.Password);
             }
@@ -75,13 +79,162 @@ namespace be.Controllers
                 user.RoleId = 1;
 
                 //await Task.Run(() => _userService.AddUser(user));
-                //_userService.AddUser(user);
+                _userService.AddUser(user);
                 _emailService.SendMail(user.Email, 2, user.FullName, user.AccountName, user.Password);
             }
 
             return Ok();
         }
 
+        //Phan Cua Huy
 
+        [HttpGet("GetAllUser")]
+        public ActionResult GetUserList()
+        {
+            try
+            {
+                var userList = _userService.GetAllUser();
+                return Ok(userList);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("AddUser")]
+        public async Task<ActionResult> AddUser(AddUser adduser)
+        {
+            try
+            {
+                User user = new User();
+                user.FullName = adduser.Fullname;
+                user.Email = adduser.Email;
+                user.Birthday = adduser.BirthDay;
+                var result = _userService.AddUser(user);
+                return Ok(new
+                {
+                    message = "Add user success!",
+                    status = 200,
+                    data = result
+                });
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("GetUserDetail")]
+        public ActionResult GetUserDetail(int userId)
+        {
+            try
+            {
+                var user = _userService.GetUserInformation(userId);
+                if (user == null)
+                {
+                    return Ok(new
+                    {
+                        message = "The user doesn't exist in database!",
+                        status = 400
+                    });
+                }
+                else
+                {
+                    return Ok(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("UpdateUser/{id}")]
+        public ActionResult UpdateUser([FromBody] UserUpdateInfor user)
+        {
+            try
+            {
+                User updateUser = new User();
+                updateUser.UserId = user.UserId;
+                updateUser.FullName = user.Fullname;
+                updateUser.Email = user.Email;
+                updateUser.Password = user.Password;
+                updateUser.Birthday = user.BirthDay;
+                var afterUpdate = _userService.UpdateUser(updateUser);
+                return Ok(new
+                {
+                    message = "Edit user success!",
+                    status = 200,
+                    data = afterUpdate
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("ChangeUserStatus")]
+        public ActionResult ChangeStatus(int userId, string status)
+        {
+            try
+            {
+                var check = _userService.GetUserInformation(userId);
+                if (check == null)
+                {
+                    return Ok(new
+                    {
+                        message = "The user doesn't exist in database!",
+                        status = 400
+                    });
+                }
+                else
+                {
+                    User updateUser = new User();
+                    updateUser.UserId = userId;
+                    updateUser.Status = status;
+                    _userService.ChangeStatus(updateUser);
+                    return Ok(new
+                    {
+                        message = "Edit user success!",
+                        status = 200,
+                        data = _userService.GetUserInformation(userId)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("GetAllEmailUser")]
+        public ActionResult GetEmailList()
+        {
+            try
+            {
+                var emailList = _userService.GetAllEmailUser();
+                return Ok(emailList);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("login")]
+        public ActionResult Login( Login login)
+        {
+            try
+            {
+                var result = _userService.Login(login.Account, login.Password, _configuration);
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
     }
 }

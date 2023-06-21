@@ -55,6 +55,22 @@ namespace be.Controllers
         //        throw ex;
         //    }
         //}
+<<<<<<< HEAD
+=======
+
+        [HttpGet("user")]
+        public async Task<ActionResult> GetElementsByIdUser(int idUser, int idComponent)
+        {
+            try
+            {
+                return Ok(await _issueService.GetElementsByIdUser(idUser, idComponent));
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
 
         [HttpGet]
         public async Task<ActionResult> GetElement(int id)

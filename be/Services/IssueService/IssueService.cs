@@ -1,7 +1,15 @@
 ﻿using be.DTOs;
 using be.Models;
 using be.Repositories.IssueRepository;
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Mvc;
+=======
+using be.Services.OtherService;
+using be.Services.UserService;
+using MailKit;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
 
 namespace be.Services.IssueService
 {
@@ -12,10 +20,58 @@ namespace be.Services.IssueService
     {
         private readonly IIssueRepository _issueRepository;
 
+<<<<<<< HEAD
         public IssueService(IIssueRepository issueRepository)
+=======
+
+        private readonly IUserService _userService; 
+
+
+        public IssueService(IIssueRepository issueRepository, IUserService userService)
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         {
             _issueRepository = issueRepository;
+
+            _userService = userService;
         }
+
+        // Edit issue
+        public async Task<ResponseDTO> EditIssue(IssueCreateDTO issue)
+        {
+            try
+            {
+                var issueEdited = await _issueRepository.EditIssue(issue);
+                if (issueEdited == null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Edit Issue Failed!"
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Edit Issue Success!",
+                        data = issueEdited
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+            
+        
+      
 
         // Get issue by id
         public async Task<ResponseDTO> GetIssueById(int id)
@@ -56,8 +112,12 @@ namespace be.Services.IssueService
         {
             try
             {
-                var isCreated = await _issueRepository.CreateIssue(issue);
-                if (isCreated == false)
+                var result = await _issueRepository.CreateIssue(issue);
+                if(issue.AttachFile != null)
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, result);
+                }    
+                if (result == null)
                 {
                     return new ResponseDTO
                     {
@@ -67,6 +127,8 @@ namespace be.Services.IssueService
                 }
                 else
                 {
+                    User assignee = _userService.GetUserById(issue.AssigneeId.Value); 
+                    EmailService.Instance.SendMailCreate(result, assignee); 
                     return new ResponseDTO
                     {
                         code = 200,
@@ -84,11 +146,23 @@ namespace be.Services.IssueService
             }
         }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         public async Task<object> GetElement(int id)
         {
             return await _issueRepository.GetElement(id);
         }
 
+<<<<<<< HEAD
+=======
+        public async Task<object> GetElementsByIdUser(int idUser , int idComponent)
+        {
+            return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
+        }
+
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         // Get Items Create Issue
         public async Task<ResponseDTO> GetItemsIssue()
         {
@@ -123,6 +197,7 @@ namespace be.Services.IssueService
             }
         }
 
+<<<<<<< HEAD
         public async Task<object> MyOpenIssue(int idUser)
         {
             return await _issueRepository.MyOpenIssue(idUser);
@@ -136,5 +211,11 @@ namespace be.Services.IssueService
             return await _issueRepository.AllIssue(idUser);
         }
 
+=======
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
+        {
+            return _issueRepository.GetAllIssueByUserId(userId);
+        }
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
     }
 }

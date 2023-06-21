@@ -3,6 +3,9 @@ using be.DTOs;
 using be.Helpers;
 using be.Models;
 using be.Services.IssueService;
+using be.Services.OtherService;
+using be.Services.UserService;
+using MailKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
@@ -17,15 +20,46 @@ namespace be.Controllers
     public class IssueController : ControllerBase
     {
         private readonly IIssueService _issueService;
+<<<<<<< HEAD
         private readonly Mapper mapper;
         private readonly HandleData handleData;
         private readonly DbJiraCloneContext _context;
+=======
+        private readonly DbJiraCloneContext _context;
+
+        private readonly IUserService _userService;
+      
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         public IssueController(DbJiraCloneContext db, IIssueService issueService)
         {
             mapper = MapperConfig.InitializeAutomapper();
             _context = db;
             _issueService = issueService;
+<<<<<<< HEAD
             handleData = new HandleData();
+=======
+            _userService = new UserService();
+           
+        }
+
+        // Edit Issue
+        [HttpPost("edit")]
+        public async Task<ActionResult> Edit([FromBody] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.EditIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
         }
 
         // Get issue by id 
@@ -46,6 +80,26 @@ namespace be.Controllers
         // Create Issue
         [HttpPost("add")]
         public async Task<ActionResult> Add([FromBody] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.CreateIssue(issue);
+                
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // Create Issue
+        [HttpPost("addWithFile")]
+        public async Task<ActionResult> addWithFile([FromForm]IssueCreateDTO issue)
         {
             try
             {
@@ -108,27 +162,6 @@ namespace be.Controllers
             }
         }
 
-        [HttpPut("edit")]
-
-        public async Task<ActionResult> Edit([FromBody] Issue issue)
-        {
-            var element = await _context.Issues.FindAsync(issue.IssueId);
-            if (element == null)
-            {
-                return Ok(new
-                {
-                    message = "The issue doesn't exist in database!",
-                    status = 400
-                });
-            }
-            _context.Entry(await _context.Issues.FirstOrDefaultAsync(x => x.IssueId == element.IssueId)).CurrentValues.SetValues(issue);
-            await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                message = "Edit issue success!",
-                status = 200
-            });
-        }
         [HttpDelete("delete")]
 
         public async Task<ActionResult> Delete([FromBody] int id)
@@ -163,6 +196,7 @@ namespace be.Controllers
             }
         }
 
+<<<<<<< HEAD
 
 
 
@@ -175,12 +209,23 @@ namespace be.Controllers
             {
                 var result = await _issueService.MyOpenIssue(idUser);
                 return Ok(result);
+=======
+        //Phần của Huy
+        [HttpGet("GetAllIsseByUserId")]
+        public ActionResult GetAllIsseByUserId(int userId)
+        {
+            try
+            {
+                var issueList = _issueService.GetAllIssueByUserId(userId);
+                return Ok(issueList);
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
             }
             catch
             {
                 return BadRequest();
             }
         }
+<<<<<<< HEAD
         [HttpGet("reportbyme")]
         public async Task<ActionResult<IEnumerable<IssueDTO>>> ReportByMe(int idUser)
         {
@@ -208,5 +253,7 @@ namespace be.Controllers
             }
         }
         #endregion
+=======
+>>>>>>> feffadf24f2f3ec12b83df757bfb475b17c93a31
     }
 }
