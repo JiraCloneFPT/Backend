@@ -20,6 +20,11 @@ namespace be.Repositories.UserRepository
             return _context.Users.Where(user => user.RoleId == 1).ToList();
         }
 
+        public User GetUserById(int id)
+        {
+            return _context.Users.FirstOrDefault(user => user.UserId == id);
+        }
+
         public void AddUser(User user)
         {
             _context.Users.Add(user);

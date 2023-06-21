@@ -41,5 +41,10 @@ namespace be.Services.UserService
         {
             return _userRepository.ReplaceVietnameseCharacters(text);
         }
+
+        public User GetUserById(int id)
+        {
+            return _userRepository.GetUserById(id); 
+        }
     }
 }

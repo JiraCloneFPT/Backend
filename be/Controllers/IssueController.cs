@@ -1,6 +1,9 @@
 ﻿using be.DTOs;
 using be.Models;
 using be.Services.IssueService;
+using be.Services.OtherService;
+using be.Services.UserService;
+using MailKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
@@ -16,10 +19,14 @@ namespace be.Controllers
     {
         private readonly IIssueService _issueService;
         private readonly DbJiraCloneContext _context;
+        private readonly IUserService _userService;
+      
         public IssueController(DbJiraCloneContext db, IIssueService issueService)
         {
             _context = db;
             _issueService = issueService;
+            _userService = new UserService();
+           
         }
 
         // Get issue by id 
@@ -48,6 +55,7 @@ namespace be.Controllers
                     return BadRequest();
                 }
                 var resData = await _issueService.CreateIssue(issue);
+                
                 return Ok(resData);
             }
             catch (Exception ex)

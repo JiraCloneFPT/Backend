@@ -12,6 +12,7 @@ namespace be.Repositories.UserRepository
 
         public  string ReplaceVietnameseCharacters(string text);
 
+        public User GetUserById(int id); 
 
     }
 }

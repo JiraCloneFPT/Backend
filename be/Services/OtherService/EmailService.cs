@@ -2,14 +2,22 @@
 using MimeKit.Text;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Org.BouncyCastle.Crypto.Generators;
+
 using be.Helpers;
+using be.Models;
+using be.DTOs;
+using be.Services.UserService;
 
 namespace be.Services.OtherService
 {
     public class EmailService
     {
         private static EmailService instance;
+
+  
+
+       
+
         public static EmailService Instance
         {
             get { if (instance == null) instance = new EmailService(); return EmailService.instance; }
@@ -32,7 +40,7 @@ namespace be.Services.OtherService
                     _text = EmailHelper.Instance.Body(fullname, account, password);
                 }
                 var email = new MimeMessage();
-                email.From.Add(MailboxAddress.Parse("vmhsky7@gmail.com"));
+                email.From.Add(MailboxAddress.Parse("jira.service.fpt@gmail.com"));
                 email.To.Add(MailboxAddress.Parse(mail));
                 email.Subject = "JIRA COMFIRMED ACCOUNT";
                 email.Body = new TextPart(TextFormat.Html)
@@ -41,7 +49,7 @@ namespace be.Services.OtherService
                 };
                 var smtp = new SmtpClient();
                 await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                await smtp.AuthenticateAsync("vmhsky7@gmail.com", "dvjgqyaqzugkciif");
+                await smtp.AuthenticateAsync("jira.service.fpt@gmail.com", "dvjgqyaqzugkciif");
                 await smtp.SendAsync(email);
                 await smtp.DisconnectAsync(true);
                 return true;
@@ -52,5 +60,36 @@ namespace be.Services.OtherService
             }
 
         }
+        public async Task<bool> SendMailCreate(Issue issue, User assignee )
+        {
+
+
+            try
+            {
+                
+                string _text = "";
+                    _text = EmailHelper.Instance.BodyUpdateEmail(issue);
+                
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse("jira.service.fpt@gmail.com"));
+                email.To.Add(MailboxAddress.Parse(assignee.Email));
+                email.Subject = "[FI2.0 JIRA3] Updates for FSOFTACADEMY-"+ issue.IssueId + ": "+ issue.Summary + "";
+                email.Body = new TextPart(TextFormat.Html)
+                {
+                    Text = _text
+                };
+                var smtp = new SmtpClient();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, false);
+                await smtp.AuthenticateAsync("jira.service.fpt@gmail.com", "hcjizzxjmyobukzt");
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        
     }
 }

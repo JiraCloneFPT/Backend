@@ -11,10 +11,9 @@ namespace be.Repositories.IssueRepository
     {
         // Get Items select list to Create Issue
         Task<ListItemsOfIssueDTO> GetItemsIssue();
-
         // Create Issue
-        Task<bool> CreateIssue(IssueCreateDTO issue);
-
+        Task<Issue> CreateIssue(IssueCreateDTO issue);
+      
 
     }
 }

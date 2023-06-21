@@ -1,6 +1,8 @@
 using be.Models;
 using be.Repositories.IssueRepository;
+using be.Repositories.UserRepository;
 using be.Services.IssueService;
+using be.Services.UserService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -31,6 +33,8 @@ var services = builder.Services;
 
 services.AddScoped<IIssueRepository, IssueRepository>();
 services.AddScoped<IIssueService, IssueService>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

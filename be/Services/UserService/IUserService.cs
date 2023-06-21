@@ -6,14 +6,10 @@ namespace be.Services.UserService
     {
         public IList<User> GetAllUser();
         public void AddUser(User user);
-
         public string GenerateAccount(string fullName);
         public string RemoveAccents(string input);
-
         public string ReplaceVietnameseCharacters(string text);
-
-
         public string GenerateRandomString();
-
+        public User GetUserById(int id); 
     }
 }

@@ -2,6 +2,8 @@
 using be.DTOs;
 using be.Models;
 using be.Repositories.BaseRepository;
+using be.Services.OtherService;
+using Microsoft.Extensions.Logging;
 
 namespace be.Repositories.IssueRepository
 {
@@ -9,39 +11,45 @@ namespace be.Repositories.IssueRepository
     /// <summary>
     /// Issue Repository
     /// </summary> 
+
     public class IssueRepository : BaseRepository<Issue>, IIssueRepository
     {
+
+        private readonly EmailService _emailService; 
         public IssueRepository(DbJiraCloneContext context) : base(context)
         {
+            _emailService = new EmailService(); 
         }
 
-        public async Task<bool> CreateIssue(IssueCreateDTO issue)
+        public async Task<Issue> CreateIssue(IssueCreateDTO issue)
         {
             try
             {
                 Issue newIssue = new Issue();
+                var dateTime = DateTime.Now;
+
                 newIssue.ProjectId = issue.ProjectId;
                 newIssue.IssueTypeId = issue.IssueTypeId;
                 newIssue.ComponentId = issue.ComponentId;
-                newIssue.ProductId = issue.ProductId ;
-                newIssue.ReporterId = issue.ReporterId ;
-                newIssue.AssigneeId= issue.AssigneeId ;
-                newIssue.Summary = issue.Summary ;
-                newIssue.Description = issue.Description ;
-                newIssue.DescriptionTranslate = issue.DescriptionTranslate ;
-                newIssue.FixVersion = issue.FixVersion ;
-                newIssue.DefectOriginId = issue.DefectTypeId ;
-                newIssue.PriorityId = issue.PriorityId ;
-                newIssue.Severity = issue.Severity ;
-                newIssue.QcactivityId = issue.QcactivityId ;
-                newIssue.AffectsVersion = issue.AffectsVersion ;
-                newIssue.CauseAnalysis = issue.CauseAnalysis ;
-                newIssue.CauseAnalysisTranslate = issue.CauseAnalysisTranslate ;
-                newIssue.TechnicalCauseId = issue.TechnicalCauseId ;
-                newIssue.Environment = issue.Environment ;
-                newIssue.RoleIssueId = issue.RoleIssueId ;
-                newIssue.PlannedStart = issue.PlannedStart ;
-                newIssue.OriginalEstimate = issue.OriginalEstimate ;
+                newIssue.ProductId = issue.ProductId;
+                newIssue.ReporterId = issue.ReporterId;
+                newIssue.AssigneeId = issue.AssigneeId;
+                newIssue.Summary = issue.Summary;
+                newIssue.Description = issue.Description;
+                newIssue.DescriptionTranslate = issue.DescriptionTranslate;
+                newIssue.FixVersion = issue.FixVersion;
+                newIssue.DefectOriginId = issue.DefectTypeId;
+                newIssue.PriorityId = issue.PriorityId;
+                newIssue.Severity = issue.Severity;
+                newIssue.QcactivityId = issue.QcactivityId;
+                newIssue.AffectsVersion = issue.AffectsVersion;
+                newIssue.CauseAnalysis = issue.CauseAnalysis;
+                newIssue.CauseAnalysisTranslate = issue.CauseAnalysisTranslate;
+                newIssue.TechnicalCauseId = issue.TechnicalCauseId;
+                newIssue.Environment = issue.Environment;
+                newIssue.RoleIssueId = issue.RoleIssueId;
+                newIssue.PlannedStart = issue.PlannedStart;
+                newIssue.OriginalEstimate = issue.OriginalEstimate;
                 newIssue.RemaningEstimate = issue.RemainingEstimate;
                 newIssue.EstimateEffort = issue.EstimateEffort;
                 newIssue.Complexity = issue.Complexity;
@@ -53,6 +61,7 @@ namespace be.Repositories.IssueRepository
                 newIssue.FunctionId = issue.FunctionId;
                 newIssue.TestcaseId = issue.TestcaseId;
                 newIssue.FunctionCategory = issue.FunctionCategory;
+                //newIssue.LinkedIssueId // not match in db 
                 newIssue.Issue1 = issue.Issue1;
                 newIssue.EpicLink = issue.EpicLink;
                 newIssue.ClosedDate = issue.ClosedDate;
@@ -63,20 +72,21 @@ namespace be.Repositories.IssueRepository
                 newIssue.DueTime = issue.DueTime;
                 newIssue.Units = issue.Units;
                 newIssue.PercentDone = issue.PercentDone;
-                newIssue.StatusIssueId = ((int)Commons.StatusIssue.Open) ; 
-                newIssue.CreateTime = DateTime.Now;
+                newIssue.StatusIssueId = ((int)Commons.StatusIssue.Open);
+                newIssue.CreateTime = dateTime;
 
                 await context.Issues.AddAsync(newIssue);
-                var created = await context.SaveChangesAsync();
+                await context.SaveChangesAsync();
 
-                return  created > 0 ? true : false;
+                var lastIssue = context.Issues.Where(e => e.CreateTime == dateTime).FirstOrDefault();
+
+                return lastIssue;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-
 
         // Get Items to Create Issue
         public async Task<ListItemsOfIssueDTO> GetItemsIssue()
