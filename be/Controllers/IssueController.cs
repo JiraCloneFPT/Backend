@@ -22,6 +22,25 @@ namespace be.Controllers
             _issueService = issueService;
         }
 
+        // Edit Issue
+        [HttpPost("edit")]
+        public async Task<ActionResult> Edit([FromBody] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.EditIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         // Get issue by id 
         [HttpGet("GetIssueById")]
         public async Task<IActionResult> GetIssueById(int id)
@@ -40,6 +59,25 @@ namespace be.Controllers
         // Create Issue
         [HttpPost("add")]
         public async Task<ActionResult> Add([FromBody] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.CreateIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // Create Issue
+        [HttpPost("addWithFile")]
+        public async Task<ActionResult> addWithFile([FromForm]IssueCreateDTO issue)
         {
             try
             {
@@ -176,27 +214,6 @@ namespace be.Controllers
             }
         }
 
-        [HttpPut("edit")]
-
-        public async Task<ActionResult> Edit([FromBody] Issue issue)
-        {
-            var element = await _context.Issues.FindAsync(issue.IssueId);
-            if (element == null)
-            {
-                return Ok(new
-                {
-                    message = "The issue doesn't exist in database!",
-                    status = 400
-                });
-            }
-            _context.Entry(await _context.Issues.FirstOrDefaultAsync(x => x.IssueId == element.IssueId)).CurrentValues.SetValues(issue);
-            await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                message = "Edit issue success!",
-                status = 200
-            });
-        }
         [HttpDelete("delete")]
 
         public async Task<ActionResult> Delete([FromBody] int id)

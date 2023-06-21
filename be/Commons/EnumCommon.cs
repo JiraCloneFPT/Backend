@@ -18,7 +18,6 @@ namespace be.Commons
         Reopened = 6
     }
 
-
     /// <summary>
     /// Class common hard data / Enum common data
     /// </summary>

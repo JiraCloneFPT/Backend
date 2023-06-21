@@ -1,4 +1,5 @@
 using be.Models;
+using be.Repositories.BaseRepository;
 using be.Repositories.IssueRepository;
 using be.Services.IssueService;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ builder.Services.AddCors();
 
 var services = builder.Services;
 
+services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 services.AddScoped<IIssueRepository, IssueRepository>();
 services.AddScoped<IIssueService, IssueService>();
 
