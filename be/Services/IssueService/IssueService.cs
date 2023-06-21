@@ -12,9 +12,9 @@ namespace be.Services.IssueService
     /// <summary>
     /// Issue Service
     /// </summary>
-    public class IssueService : IExportService
+    public class IssueService : IIssueService
     {
-        private readonly IExportRepository _issueRepository;
+        private readonly IIssueRepository _issueRepository;
 
 
         private readonly IUserService _userService; 

@@ -17,15 +17,12 @@ namespace be.Controllers
     [ApiController]
     public class IssueController : ControllerBase
     {
-        private readonly IExportService _issueService;
+        private readonly IIssueService _issueService;
         private readonly DbJiraCloneContext _context;
-<<<<<<< HEAD
+
         private readonly IUserService _userService;
       
         public IssueController(DbJiraCloneContext db, IIssueService issueService)
-=======
-        public IssueController(DbJiraCloneContext db, IExportService issueService)
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
         {
             _context = db;
             _issueService = issueService;

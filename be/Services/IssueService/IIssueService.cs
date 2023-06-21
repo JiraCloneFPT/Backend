@@ -6,7 +6,7 @@ namespace be.Services.IssueService
     /// <summary>
     /// Interface Issue Service
     /// </summary>
-    public interface IExportService
+    public interface IIssueService
     {
         // Edit issue
         Task<ResponseDTO> EditIssue(IssueCreateDTO issue);

@@ -20,15 +20,14 @@ namespace be.Repositories.UserRepository
         {
             _context = new DbJiraCloneContext();
         }
-        public object AddUser(User user)
-        {
+        
 
         public User GetUserById(int id)
         {
             return _context.Users.FirstOrDefault(user => user.UserId == id);
         }
 
-        public void AddUser(User user)
+        public object AddUser(User user)
         {
             var account = GenerateAccount(user.FullName);
             user.AccountName = ReplaceVietnameseCharacters(account);

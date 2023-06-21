@@ -1,9 +1,11 @@
 using be.Models;
+using be.Repositories.BaseRepository;
 using be.Repositories.ComponentRepository;
 using be.Repositories.IProjectRepositoty;
 using be.Repositories.IssueRepository;
 using be.Repositories.ProductRepository;
 using be.Repositories.UserRepository;
+using be.Services;
 using be.Services.ComponentService;
 using be.Services.IssueService;
 using be.Services.ProductService;
@@ -42,10 +44,10 @@ services.AddScoped<IIssueRepository, IssueRepository>();
 services.AddScoped<IIssueService, IssueService>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IUserService, UserService>();
-=======
-services.AddScoped<IExportRepository, ExportRepository>();
-services.AddScoped<IExportService, IssueService>();
->>>>>>> 85de41de62cae4439895b8140225f10fa50b5b7f
+
+//services.AddScoped<IExportRepository, ExportRepository>();
+//services.AddScoped<IExportService, ExportService>();
+
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

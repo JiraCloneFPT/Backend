@@ -191,10 +191,10 @@ namespace be.Repositories.IssueRepository
             var enumCommon = new EnumCommon();
             var result = new ListItemsOfIssueDTO()
             {
-                Projects = context.Projects.Where(e=>e.Status == 1).Select(e => new Project { ProjectId = e.ProjectId, ProjectName = e.ProjectName }).ToList(),
+                Projects = context.Projects.Where(e=>e.Status == true).Select(e => new Project { ProjectId = e.ProjectId, ProjectName = e.ProjectName }).ToList(),
                 IssueTypes = context.IssueTypes.Select(e => new IssueType { IssueTypeId = e.IssueTypeId, IssueTypeName = e.IssueTypeName }).ToList(),
-                Components = context.Components.Where(e=>e.Status == 1).Select(e => new Component { ComponentId = e.ComponentId, ComponentName = e.ComponentName }).ToList(),
-                Products = context.Products.Where(e=>e.Status == 1).Select(e => new Product { ProductId = e.ProductId, ProductName = e.ProductName }).ToList(),
+                Components = context.Components.Where(e=>e.Status == true).Select(e => new Component { ComponentId = e.ComponentId, ComponentName = e.ComponentName }).ToList(),
+                Products = context.Products.Where(e=>e.Status == true).Select(e => new Product { ProductId = e.ProductId, ProductName = e.ProductName }).ToList(),
                 DefectOrigins = context.DefectOrigins.Select(e => new DefectOrigin { DefectOriginId = e.DefectOriginId, DefectOriginName = e.DefectOriginName }).ToList(),
                 Priorities = context.Priorities.ToList(),
                 Severities = enumCommon.Severitys,
