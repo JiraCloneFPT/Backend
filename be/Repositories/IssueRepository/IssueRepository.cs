@@ -174,7 +174,6 @@ namespace be.Repositories.IssueRepository
             };
         }
 
-<<<<<<< HEAD
         //Get items Issue by idUser 
         public async Task<Object> GetElementsByIdUser(int idUser, int idComponent)
         {
@@ -216,9 +215,22 @@ namespace be.Repositories.IssueRepository
             };
         }
 
-        
-=======
->>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
+        {
+
+            var issueList = context.Issues.Where(x => x.AssigneeId == userId && (x.StatusIssueId == 1 || x.StatusIssueId == 2 || x.StatusIssueId == 5)).Take(50).OrderByDescending(x => x.IssueId).ToList();
+            var result = (from i in issueList
+                            join p in context.Projects
+                            on i.ProjectId equals p.ProjectId
+                            select new ShortDesIssue
+                            {
+                                IssueId = i.IssueId,
+                                Key = p.ShortName + "-" + i.IssueId,
+                                Sumary = i.Summary,
+                                ReportId = i.ReporterId,
+                            }).Take(50).ToList();
+            return result;
+        }
     }
 
 

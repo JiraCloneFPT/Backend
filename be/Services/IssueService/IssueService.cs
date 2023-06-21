@@ -83,7 +83,6 @@ namespace be.Services.IssueService
             }
         }
 
-<<<<<<< HEAD
         public async Task<object> GetElement(int id)
         {
             return await _issueRepository.GetElement(id);
@@ -93,8 +92,6 @@ namespace be.Services.IssueService
         {
             return await _issueRepository.GetElementsByIdUser(idUser, idComponent);
         }
-=======
->>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
 
         // Get Items Create Issue
         public async Task<ResponseDTO> GetItemsIssue()
@@ -130,7 +127,9 @@ namespace be.Services.IssueService
             }
         }
 
-
-
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
+        {
+            return _issueRepository.GetAllIssueByUserId(userId);
+        }
     }
 }

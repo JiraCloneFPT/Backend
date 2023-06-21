@@ -41,20 +41,20 @@ namespace be.Controllers
             }
         }
 
-        // Get Items select list to Create Issue 
-        [HttpGet("GetItemsCreateIssue")]
-        public async Task<IActionResult> GetItemsCreateIssue()
-        {
-            try
-            {
-                var resData = await _issueService.GetItemsCreateIssue();
-                return StatusCode(resData.code, resData);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //// Get Items select list to Create Issue 
+        //[HttpGet("GetItemsCreateIssue")]
+        //public async Task<IActionResult> GetItemsCreateIssue()
+        //{
+        //    try
+        //    {
+        //        var resData = await _issueService.GetItemsCreateIssue();
+        //        return StatusCode(resData.code, resData);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         [HttpGet("user")]
         public async Task<ActionResult> GetElementsByIdUser(int idUser, int idComponent)

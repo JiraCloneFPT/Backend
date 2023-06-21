@@ -4,6 +4,11 @@ using System.Text;
 using System.Text.Json;
 using System.Globalization;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using be.Services.OtherService;
 
 namespace be.Repositories.UserRepository
 {
@@ -15,17 +20,42 @@ namespace be.Repositories.UserRepository
         {
             _context = new DbJiraCloneContext();
         }
+        public object AddUser(User user)
+        {
+
+            var account = GenerateAccount(user.FullName);
+            user.AccountName = ReplaceVietnameseCharacters(account);
+            user.Status = "1";
+            user.RoleId = 2;
+            user.Password = GenerateRandomString();
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            try
+            {
+                EmailService.Instance.SendMail(user.Email, 2, user.FullName, user.AccountName, user.Password);
+            }
+            catch
+            {
+                return new
+                {
+                    message = "Send mail failed!",
+                    status = 400
+                };
+            }
+            return user;
+        }
         public IList<User> GetAllUser()
         {
-            return _context.Users.Where(user => user.RoleId == 1).ToList();
+            //return _context.Users.Where(user => user.RoleId == 1).ToList();
+            return _context.Users.ToList();
         }
 
-        public void AddUser(User user)
-        {
-            _context.Users.Add(user);
+        //public void AddUser(User user)
+        //{
+        //    _context.Users.Add(user);
 
-            _context.SaveChanges();
-        }
+        //    _context.SaveChanges();
+        //}
         //public async Task<Object> AddUserSample(User user)
         //{
         //    await _context.Users.AddAsync(user);
@@ -141,6 +171,106 @@ namespace be.Repositories.UserRepository
         public void Dispose()
         {
             throw new NotImplementedException();
+        }
+
+        public IList<string> GetAllEmailUser()
+        {
+            var emailList = (from user in _context.Users
+                             select user.Email).ToList();
+            return emailList;
+        }
+
+        public void ChangeStatus(User user)
+        {
+            var updateStatusUser = _context.Users.SingleOrDefault(x => x.UserId == user.UserId);
+            updateStatusUser.Status = user.Status;
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+        }
+
+        public string CreateToken(string email, int id, IConfiguration config)
+        {
+            string role = _context.RoleUsers.Find(id).RoleName;
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Role, role)
+            };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                config.GetSection("AppSettings:Token").Value!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwt;
+        }
+        public object Login(string accoount, string password, IConfiguration config)
+        {
+            string token = "";
+            var user = _context.Users.SingleOrDefault(x => x.AccountName.ToLower() == accoount.ToLower());
+            if (user == null)
+            {
+                return new
+                {
+                    status = 404,
+                    message = "The account is not found"
+                };
+            }
+            if (user.Password != password)
+            {
+                return new
+                {
+                    status = 404,
+                    message = "Password is wrong"
+                };
+            }
+            if (user.Status == "0")
+            {
+                return new
+                {
+                    status = 404,
+                    message = "Your account is blocked. Please contact to admin"
+                };
+            }
+            token = CreateToken(user.Email, (int)user.RoleId, config);
+            if (user.AccountName == accoount && user.Password == password && user.Status == "1")
+            {
+                return new
+                {
+                    message = "Login success!",
+                    status = 200,
+                    data = user,
+                    token
+                };
+            }
+            return null;
+        }
+
+        public User UpdateUser(User user)
+        {
+            var updateUser = _context.Users.SingleOrDefault(x => x.UserId == user.UserId);
+            var account = GenerateAccount(user.FullName);
+            updateUser.AccountName = ReplaceVietnameseCharacters(account);
+            updateUser.FullName = user.FullName;
+            updateUser.Email = user.Email;
+            updateUser.Birthday = user.Birthday;
+            _context.SaveChanges();
+            EmailService.Instance.SendMail(user.Email, 3, updateUser.FullName, updateUser.AccountName, user.Password);
+            return updateUser;
+        }
+
+        public User GetUserInformation(int userId)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.UserId == userId);
+            return user;
         }
     }
 }

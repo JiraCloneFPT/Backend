@@ -14,12 +14,10 @@ namespace be.Repositories.IssueRepository
 
         // Create Issue
         Task<bool> CreateIssue(IssueCreateDTO issue);
-<<<<<<< HEAD
         Task<object> GetElement(int id);
         Task<object> GetElementsByIdUser(int idUser, int idComponent);
-=======
 
-
->>>>>>> d6fd17adfd157c1db32e46535853e9a8e2bdf35d
+        //Phần của Huy
+        public IList<ShortDesIssue> GetAllIssueByUserId(int userId);
     }
 }
