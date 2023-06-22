@@ -139,6 +139,9 @@ public partial class DbJiraCloneContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.ClosedDate).HasColumnType("date");
+            entity.Property(e => e.CreateTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.DueDate).HasColumnType("date");
             entity.Property(e => e.DueTime)
                 .HasMaxLength(55)
@@ -194,9 +197,6 @@ public partial class DbJiraCloneContext : DbContext
             entity.Property(e => e.Units)
                 .HasMaxLength(100)
                 .IsUnicode(false);
-            entity.Property(e => e.UpdateTime)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
             entity.Property(e => e.ValuePoint)
                 .HasMaxLength(55)
                 .IsUnicode(false);
@@ -309,10 +309,6 @@ public partial class DbJiraCloneContext : DbContext
                 .HasForeignKey(d => d.PriorityId)
                 .HasConstraintName("FK_Issue_Priority");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.Issues)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_Issue_Product");
-
             entity.HasOne(d => d.Project).WithMany(p => p.Issues)
                 .HasForeignKey(d => d.ProjectId)
                 .HasConstraintName("FK_Issue_Project");
@@ -377,6 +373,9 @@ public partial class DbJiraCloneContext : DbContext
             entity.ToTable("Project");
 
             entity.Property(e => e.ProjectName).HasMaxLength(255);
+            entity.Property(e => e.ShortName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Qcactivity>(entity =>

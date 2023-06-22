@@ -125,6 +125,7 @@ namespace be.DTOs
 
         public int? StatusIssueId { get; set; }
         public string? StatusIssueName { get; set; }
+        public string? ShortNameProject { get; set; }
 
 
         public string? Resolution { get; set; }

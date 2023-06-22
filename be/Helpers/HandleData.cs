@@ -27,6 +27,8 @@ namespace be.Helpers
             issue.TechnicalCauseName = _context.TechnicalCauses.Where(x => x.TechnicalCauseId == issue.TechnicalCauseId).Select(x => x.TechnicalCauseName).FirstOrDefault();
             issue.RoleIssueName = _context.RoleIssues.Where(x => x.RoleIssueId == issue.RoleIssueId).Select(x => x.RoleIssueName).FirstOrDefault();
             issue.LeakCauseName = _context.LeakCauses.Where(x => x.LeakCauseId == issue.LeakCauseId).Select(x => x.LeakCauseName).FirstOrDefault();
+            issue.ShortNameProject = _context.Projects.Where(x => x.ProjectId == issue.ProjectId).Select(x => x.ShortName).FirstOrDefault();
+
             return issue;
         } 
     }
