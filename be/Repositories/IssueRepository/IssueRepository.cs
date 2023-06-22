@@ -4,14 +4,8 @@ using be.DTOs;
 using be.Helpers;
 using be.Models;
 using be.Repositories.BaseRepository;
-using be.Services.OtherService;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
 using Component = be.Models.Component;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 
 
 namespace be.Repositories.IssueRepository
@@ -268,9 +262,9 @@ namespace be.Repositories.IssueRepository
                 data
             };
         }
-        public async Task<object> AllIssue(int idUser)
+        public async Task<object> AllIssue()
         {
-            var data = await context.Issues.Where(x => x.ReporterId == idUser || x.AssigneeId == idUser).OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
+            var data = await context.Issues.OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
             return new
             {
                 status = 200,

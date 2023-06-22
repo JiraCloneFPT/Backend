@@ -1,4 +1,5 @@
 ﻿using be.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace be.Repositories.UserRepository
 {
@@ -21,6 +22,6 @@ namespace be.Repositories.UserRepository
         User UpdateUser(User user);
         User GetUserInformation(int userId);
 
-
+        Task<object> GetInfo(string token);
     }
 }

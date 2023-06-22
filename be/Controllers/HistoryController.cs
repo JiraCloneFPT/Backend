@@ -1,4 +1,6 @@
-﻿using be.DTOs;
+﻿using AutoMapper;
+using be.DTOs;
+using be.Helpers;
 using be.Models;
 using be.Services.IssueService;
 using Microsoft.AspNetCore.Mvc;
@@ -14,155 +16,46 @@ namespace be.Controllers
     [ApiController]
     public class HistoryController : ControllerBase
     {
-        private readonly IIssueService _issueService;
         private readonly DbJiraCloneContext _context;
-        public HistoryController(DbJiraCloneContext db, IIssueService issueService)
+        private readonly Mapper mapper;
+        private readonly HandleData handleData;
+        public HistoryController(DbJiraCloneContext db)
         {
             _context = db;
-            _issueService = issueService;
+            mapper = MapperConfig.InitializeAutomapper();
+            handleData = new HandleData();
         }
-
-        // Create Issue
-        [HttpPost("CreateIssue")]
-        public async Task<IActionResult> CreateIssue([FromBody] IssueCreateDTO issue)
-        {
-            try
-            {
-                //if(issue == null)
-                //{
-                //    return BadRequest();
-                //}
-                var resData = await _issueService.CreateIssue(issue);
-                return StatusCode(resData.code, resData);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        //// Get Items select list to Create Issue 
-        //[HttpGet("GetItemsCreateIssue")]
-        //public async Task<IActionResult> GetItemsCreateIssue()
-        //{
-        //    try
-        //    {
-        //        var resData = await _issueService.GetItemsCreateIssue();
-        //        return StatusCode(resData.code, resData);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
-
-        //[HttpGet("user")]
-        //public async Task<ActionResult> GetElementsByIdUser(int idUser, int idComponent)
-        //{
-        //    try
-        //    {
-        //        return Ok(await _issueService.GetElementsByIdUser(idUser, idComponent));
-        //    }
-        //    catch
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
 
         [HttpGet]
-        public async Task<ActionResult> GetElement(int id)
+        public async Task<ActionResult> HandleCompareObject(int idIssue)
         {
-            try
+            var history = await _context.Histories.Where(x => x.IssueId == idIssue).ToListAsync();
+            var result = new List<ObjectHistory>();
+            if(history.Count >= 2)
             {
-                return Ok(await _issueService.GetElement(id));
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-        [HttpGet("all")]
-        public async Task<ActionResult> GetElements()
-        {
-            try
-            {
-                var data = await _context.Issues.ToListAsync();
-                return Ok(new
+                for (int i = 0; i < history.Count - 1; i++)
                 {
-                    status = 200,
-                    data
-                });
+                    var data = new ObjectHistory();
+                    data.IdHistory1 = history[i].HistoryId;
+                    data.IdHistory2 = history[i + 1].HistoryId;
+                    data.Properties = CompareTwoObject.CompareObjects<History>(history[i], history[i + 1]);
+                    data.CreateAt = history[i].CreateTime;
+                    result.Add(data);
+                }
             }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-        [HttpPost("add")]
-        public async Task<ActionResult> Add([FromBody] Issue issue)
-        {
-            await _context.Issues.AddAsync(issue);
-            await _context.SaveChangesAsync();
+            
             return Ok(new
             {
-                message = "Add issue success!",
                 status = 200,
-                data = issue
+                data = result
             });
         }
-        [HttpPut("edit")]
-
-        public async Task<ActionResult> Edit([FromBody] Issue issue)
-        {
-            var element = await _context.Issues.FindAsync(issue.IssueId);
-            if (element == null)
-            {
-                return Ok(new
-                {
-                    message = "The issue doesn't exist in database!",
-                    status = 400
-                });
-            }
-            _context.Entry(await _context.Issues.FirstOrDefaultAsync(x => x.IssueId == element.IssueId)).CurrentValues.SetValues(issue);
-            await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                message = "Edit issue success!",
-                status = 200
-            });
-        }
-        [HttpDelete("delete")]
-
-        public async Task<ActionResult> Delete([FromBody] int id)
-        {
-            var element = await _context.Issues.FindAsync(id);
-            if (element == null)
-            {
-                return Ok(new
-                {
-                    message = "The issue doesn't exist in database!",
-                    status = 404
-                });
-            }
-            try
-            {
-                _context.Issues.Remove(element);
-                await _context.SaveChangesAsync();
-                return Ok(new
-                {
-                    message = "Delete issue success!",
-                    status = 200
-                });
-            }
-            catch (Exception e)
-            {
-                return Ok(new
-                {
-                    message = "Error system!",
-                    status = 400,
-                    data = e.Message
-                });
-            }
-        }
+    }
+    public class ObjectHistory
+    {
+        public int IdHistory1 { get; set; }
+        public int IdHistory2 { get; set; }
+        public List<Properties> Properties { get; set; }
+        public DateTime CreateAt { get; set; }
     }
 }
