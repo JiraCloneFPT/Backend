@@ -29,21 +29,26 @@ namespace be.Services.IssueService
             try
             {
                 var issueEdited = await _issueRepository.EditIssue(issue);
-                if (issueEdited == null)
+                if (issue.AttachFile != null)
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
+                if (issueEdited != null && historyCreated != null)
                 {
                     return new ResponseDTO
                     {
-                        code = 500,
-                        message = "Edit Issue Failed!"
+                        code = 200,
+                        message = "Edit Issue and Add history success!",
+                        data = issueEdited
                     };
                 }
                 else
                 {
                     return new ResponseDTO
                     {
-                        code = 200,
-                        message = "Edit Issue Success!",
-                        data = issueEdited
+                        code = 500,
+                        message = "Edit Issue OR Add History Failed!"
                     };
                 }
             }
@@ -95,27 +100,28 @@ namespace be.Services.IssueService
         {
             try
             {
-                var result = await _issueRepository.CreateIssue(issue);
+                var issueCreated = await _issueRepository.CreateIssue(issue);
                 if(issue.AttachFile != null)
                 {
-                    await _issueRepository.AddFile(issue.AttachFile, result);
-                }    
-                if (result == null)
+                    await _issueRepository.AddFile(issue.AttachFile, issueCreated);
+                }
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueCreated, issue.UserId.Value);
+                if (issueCreated != null && historyCreated != null)
+                {
+                    User assignee = _userService.GetUserById(issue.AssigneeId.Value);
+                    EmailService.Instance.SendMailCreate(issueCreated, assignee);
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Create Issue Success!"
+                    };
+                }
+                else
                 {
                     return new ResponseDTO
                     {
                         code = 500,
                         message = "Create Issue Failed!"
-                    };
-                }
-                else
-                {
-                    User assignee = _userService.GetUserById(issue.AssigneeId.Value); 
-                    EmailService.Instance.SendMailCreate(result, assignee); 
-                    return new ResponseDTO
-                    {
-                        code = 200,
-                        message = "Create Issue Success!"
                     };
                 }
             }

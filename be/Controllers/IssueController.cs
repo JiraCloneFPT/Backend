@@ -37,8 +37,8 @@ namespace be.Controllers
         }
 
         // Edit Issue
-        [HttpPost("edit")]
-        public async Task<ActionResult> Edit([FromBody] IssueCreateDTO issue)
+        [HttpPut("edit")]
+        public async Task<ActionResult> Edit([FromForm] IssueCreateDTO issue)
         {
             try
             {
@@ -62,26 +62,6 @@ namespace be.Controllers
             try
             {
                 var resData = await _issueService.GetIssueById(id);
-                return Ok(resData);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        // Create Issue
-        [HttpPost("add")]
-        public async Task<ActionResult> Add([FromBody] IssueCreateDTO issue)
-        {
-            try
-            {
-                if (issue == null)
-                {
-                    return BadRequest();
-                }
-                var resData = await _issueService.CreateIssue(issue);
-
                 return Ok(resData);
             }
             catch (Exception ex)

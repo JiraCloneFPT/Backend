@@ -96,9 +96,13 @@
 
         public int? StatusIssueId { get; set; }
 
+        public string? Resolution { get; set; }
+
         public DateTime? CreateTime { get; set; }
 
         public IFormFile? AttachFile { get; set; }
+
+        public int? UserId { get; set; }
 
     }
 }

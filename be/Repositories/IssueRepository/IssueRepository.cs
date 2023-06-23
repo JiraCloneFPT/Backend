@@ -33,6 +33,73 @@ namespace be.Repositories.IssueRepository
 
         }
 
+        public async Task<History> CreateHistoryIssue(Issue issue, int userId)
+        {
+            try
+            {
+                History history = new History();
+                var dateTime = DateTime.Now;
+                history.EditorId = userId;
+                history.ProjectId = issue.ProjectId;
+                history.IssueTypeId = issue.IssueTypeId;
+                history.ComponentId = issue.ComponentId;
+                history.ProductId = issue.ProductId;
+                history.ReporterId = issue.ReporterId;
+                history.AssigneeId = issue.AssigneeId;
+                history.Summary = issue.Summary;
+                history.Description = issue.Description;
+                history.DescriptionTranslate = issue.DescriptionTranslate;
+                history.FixVersion = issue.FixVersion;
+                history.DefectOriginId = issue.DefectTypeId;
+                history.PriorityId = issue.PriorityId;
+                history.Severity = issue.Severity;
+                history.QcactivityId = issue.QcactivityId;
+                history.AffectsVersion = issue.AffectsVersion;
+                history.CauseAnalysis = issue.CauseAnalysis;
+                history.CauseAnalysisTranslate = issue.CauseAnalysisTranslate;
+                history.TechnicalCauseId = issue.TechnicalCauseId;
+                history.Environment = issue.Environment;
+                history.RoleIssueId = issue.RoleIssueId;
+                history.PlannedStart = issue.PlannedStart;
+                history.OriginalEstimate = issue.OriginalEstimate;
+                history.RemainingEstimate = issue.RemaningEstimate;
+                history.EstimateEffort = issue.EstimateEffort;
+                history.Complexity = issue.Complexity;
+                history.AdjustVp = issue.AdjustedVp;
+                history.ValuePoint = issue.ValuePoint;
+                history.DueDate = issue.DueDate;
+                history.Labels = issue.Labels;
+                history.Sprint = issue.Sprint;
+                history.FunctionId = issue.FunctionId;
+                history.TestcaseId = issue.TestcaseId;
+                history.FunctionCategory = issue.FunctionCategory;
+                //newIssue.LinkedIssueId // not match in db 
+                history.Issue = issue.Issue1;   // issue 
+                history.EpicLink = issue.EpicLink;
+                history.ClosedDate = issue.ClosedDate;
+                history.SecurityLevel = issue.SecurityLevel;
+                history.DefectTypeId = issue.DefectTypeId;
+                history.CauseCategoryId = issue.CauseCategoryId;
+                history.LeakCauseId = issue.LeakCauseId;
+                history.DueTime = issue.DueTime;
+                history.Units = issue.Units;
+                history.PercentDone = issue.PercentDone;
+                history.StatusIssueId = ((int)Commons.StatusIssue.Open);
+                history.CreateTime = dateTime;
+
+                await context.Histories.AddAsync(history);
+                await context.SaveChangesAsync();
+
+                var lastHistory = context.Histories.Where(e => e.CreateTime == dateTime).FirstOrDefault();
+
+                return lastHistory;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<bool> AddFile(IFormFile file, Issue issue)
         {
             try
@@ -69,7 +136,7 @@ namespace be.Repositories.IssueRepository
                 var issueEdit = context.Issues.Where(e => e.IssueId == issue.IssueId).FirstOrDefault();
                 if (issueEdit != null)
                 {
-                    issueEdit.Summary = issue.Summary;
+                    issueEdit.Summary = issue?.Summary;
                     issueEdit.ComponentId = issue.ComponentId;
                     issueEdit.ProductId = issue.ProductId;
                     issueEdit.Description = issue.Description;
@@ -94,13 +161,12 @@ namespace be.Repositories.IssueRepository
                     issueEdit.Complexity = issue.Complexity;
                     issueEdit.AdjustedVp = issue.AdjustedVp;
                     issueEdit.DueDate = issue.DueDate;
-                    //attach
                     issueEdit.Labels = issue.Labels;
                     issueEdit.Sprint = issue.Sprint;
                     issueEdit.FunctionId = issue.FunctionId;
                     issueEdit.TestcaseId = issue.TestcaseId;
                     issueEdit.FunctionCategory = issue.FunctionCategory;
-                    //issueEdit.LinkedIssueId  // field is't have in db 
+                    //issueEdit.LinkedIssueId  // field not have in db 
                     issueEdit.Issue1 = issue.Issue1;  // mockIssueId
                     issueEdit.EpicLink = issue.EpicLink;
                     issueEdit.ClosedDate = issue.ClosedDate;
@@ -111,6 +177,7 @@ namespace be.Repositories.IssueRepository
                     issueEdit.DueTime = issue.DueTime;
                     issueEdit.Units = issue.Units;
                     issueEdit.PercentDone = issue.PercentDone;
+                    issueEdit.Resolution = issue.Resolution; // 
                     //comment
 
                     context.Issues.Update(issueEdit);
@@ -296,7 +363,7 @@ namespace be.Repositories.IssueRepository
                             }).Take(50).ToList();
             return result;
         }
-    }
 
+    }
 
 }
