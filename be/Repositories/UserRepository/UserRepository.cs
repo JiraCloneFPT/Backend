@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using be.Services.OtherService;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
 
 namespace be.Repositories.UserRepository
 {
@@ -50,6 +52,13 @@ namespace be.Repositories.UserRepository
             }
             return user;
         }
+
+        // PhuNV17 function
+        public void AddUserByExcel(User user)
+        {
+            _context.Users.Add(user);
+            _context.SaveChanges();
+        }
         public IList<User> GetAllUser()
         {
             //return _context.Users.Where(user => user.RoleId == 1).ToList();
@@ -84,7 +93,7 @@ namespace be.Repositories.UserRepository
             IList<Record> records = new List<Record>();
             return records; 
         }
-        public  string RemoveAccents(string input)
+        public string RemoveAccents(string input)
         {
             string decomposed = input.Normalize(NormalizationForm.FormD);
             StringBuilder builder = new StringBuilder();
@@ -98,7 +107,7 @@ namespace be.Repositories.UserRepository
             return builder.ToString();
         }
 
-        public  string ReplaceVietnameseCharacters(string text)
+        public string ReplaceVietnameseCharacters(string text)
         {
             Dictionary<char, char> replacements = new Dictionary<char, char>()
     {
@@ -216,7 +225,7 @@ namespace be.Repositories.UserRepository
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
+            return "bearer "+ jwt;
         }
         public object Login(string accoount, string password, IConfiguration config)
         {
@@ -277,6 +286,72 @@ namespace be.Repositories.UserRepository
         {
             var user = _context.Users.FirstOrDefault(x => x.UserId == userId);
             return user;
+        }
+
+        #region HUYNG5 - code bổ sung 
+        public object ChangePassword(int userId, string newPasword)
+        {
+            var getUser = _context.Users.SingleOrDefault(x => x.UserId == userId);
+            if(getUser == null)
+            {
+                return new
+                {
+                    status = 404,
+                    message = "Not found account"
+                };
+            } else
+            {
+                getUser.Password = newPasword;
+                _context.SaveChanges();
+                return new
+                {
+                    message = "Change password successfully",
+                    status = 200,
+                    data = getUser
+                };
+            }
+        }
+        #endregion
+
+
+
+        public async Task<object> GetInfo(string token)
+        {
+            string _token = token.Split(' ')[1];
+            if (_token == null)
+            {
+                return new
+                {
+                    message = "Token is wrong!",
+                    status = 400
+                };
+            }
+            var handle = new JwtSecurityTokenHandler();
+            string email = handle.ReadJwtToken(_token).Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
+            if (user == null)
+            {
+                return new
+                {
+                    message = "User is not found!",
+                    status = 404
+                };
+            }
+            return new
+            {
+                message = "Get information success!",
+                status = 200,
+                data = user,
+            };
+        }
+
+        // PhuNV17
+        public  IList<User> GetAllAccount(string account)
+        {
+            IList<User> accounts = new List<User>();
+            accounts = _context.Users.Where(user => user.AccountName == account).ToList();
+            return accounts;
+
         }
     }
 }

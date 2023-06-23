@@ -55,9 +55,11 @@ public partial class DbJiraCloneContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<Watcher> Watchers { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-D2EC2ECN\\SQLEXPRESS;Initial Catalog=dbJiraClone;Integrated Security=True;encrypt=false");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-B9LVRBH\\SQLEXPRESS;Initial Catalog=dbJiraClone;Trusted_Connection=SSPI;Encrypt=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -463,6 +465,23 @@ public partial class DbJiraCloneContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("FK_User_RoleUser");
+        });
+
+        modelBuilder.Entity<Watcher>(entity =>
+        {
+            entity.HasKey(e => e.WatcherId).HasName("PK__Watcher__D746D1310FF49ADD");
+
+            entity.ToTable("Watcher");
+
+            entity.HasOne(d => d.Issue).WithMany(p => p.Watchers)
+                .HasForeignKey(d => d.IssueId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WatcherIssue");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Watchers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_WatcherUser");
         });
 
         OnModelCreatingPartial(modelBuilder);

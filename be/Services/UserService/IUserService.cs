@@ -1,4 +1,5 @@
 ﻿using be.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace be.Services.UserService
 {
@@ -21,5 +22,16 @@ namespace be.Services.UserService
         object Login(string accoount, string password, IConfiguration config);
         User UpdateUser(User user);
         User GetUserInformation(int userId);
+        Task<object> GetInfo(string token);
+
+        //PhuNV17
+        public void AddUserByExcel(User user);
+        public IList<User> GetAllAccount(string account);
+
+
+
+        #region HuyNG5 - code bổ sung
+        public object ChangePassword (int userId, string password);
+        #endregion
     }
 }

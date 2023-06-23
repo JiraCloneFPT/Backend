@@ -134,4 +134,6 @@ public partial class Issue
     public virtual StatusIssue? StatusIssue { get; set; }
 
     public virtual TechnicalCause? TechnicalCause { get; set; }
+
+    public virtual ICollection<Watcher> Watchers { get; set; } = new List<Watcher>();
 }
