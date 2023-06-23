@@ -25,7 +25,7 @@ namespace be.Repositories.IssueRepository
         Task<object> GetElement(int id);
         //Phần của Huy
         public IList<ShortDesIssue> GetAllIssueByUserId(int userId);
-        Task<object> AllIssue(int idUser);
+        Task<object> AllIssue();
         Task<object> MyOpenIssue(int idUser);
         Task<object> ReportByMe(int idUser);
     }

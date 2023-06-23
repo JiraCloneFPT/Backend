@@ -1,4 +1,5 @@
 ﻿using be.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace be.Repositories.UserRepository
 {
@@ -26,5 +27,6 @@ namespace be.Repositories.UserRepository
         public IList<User> GetAllAccount(string account);
 
 
+        Task<object> GetInfo(string token);
     }
 }

@@ -4,14 +4,8 @@ using be.DTOs;
 using be.Helpers;
 using be.Models;
 using be.Repositories.BaseRepository;
-using be.Services.OtherService;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
 using Component = be.Models.Component;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 
 
 namespace be.Repositories.IssueRepository
@@ -231,43 +225,7 @@ namespace be.Repositories.IssueRepository
         //Get items Issue by id
         public async Task<Object> GetElement(int id)
         {
-            var data = await context.Issues.Where(x => x.IssueId == id).Select(issue => new
-            {
-                issue.IssueId,
-                issue.ProjectId,
-                projecyName = context.Projects.Where(x => x.ProjectId == issue.ProjectId).FirstOrDefault().ProjectName,
-                issue.IssueType,
-                issueTypeName = context.IssueTypes.Where(x => x.IssueTypeId == issue.IssueTypeId).FirstOrDefault().IssueTypeName,
-                issue.ComponentId,
-                componentName = context.Components.Where(x => x.ComponentId == issue.ComponentId).FirstOrDefault().ComponentName,
-                issue.ProductId,
-                productName = context.Products.Where(x => x.ProductId == issue.ProductId).FirstOrDefault().ProductName,
-                issue.ReporterId,
-                reporterName = context.Users.Where(x => x.UserId == issue.ReporterId).FirstOrDefault().FullName,
-                issue.AssigneeId,
-                assigneeName = context.Users.Where(x => x.UserId == issue.AssigneeId).FirstOrDefault().FullName,
-                issue.Summary,
-                issue.Description,
-                issue.DefectOriginId,
-                defectOriginName = context.DefectOrigins.Where(x => x.DefectOriginId == issue.DefectOriginId).FirstOrDefault().DefectOriginName,
-                issue.PriorityId,
-                priorityName = context.Priorities.Where(x => x.PriorityId == issue.PriorityId).FirstOrDefault().PriorityName,
-                issue.QcactivityId,
-                qcActivityName = context.Qcactivities.Where(x => x.QcactivityId == issue.QcactivityId).FirstOrDefault().QcactivityName,
-                issue.RoleIssueId,
-                roleIssueName = context.RoleIssues.Where(x => x.RoleIssueId == issue.RoleIssueId).FirstOrDefault().RoleIssueName,
-                issue.DefectTypeId,
-                defectypeName = context.DefectTypes.Where(x => x.DefectTypeId == issue.DefectTypeId).FirstOrDefault().DefectTypeName,
-                issue.CauseCategoryId,
-                causeCategoryName = context.CauseCategories.Where(x => x.CauseCategoryId == issue.CauseCategoryId).FirstOrDefault().CauseCategoryName,
-                issue.LeakCauseId,
-                leakCauseName = context.LeakCauses.Where(x => x.LeakCauseId == issue.LeakCauseId).FirstOrDefault().LeakCauseName,
-                issue.StatusIssueId,
-                statusIssueName = context.StatusIssues.Where(x => x.StatusIssueId == issue.StatusIssueId).FirstOrDefault().StatusIssueName,
-                issue.SecurityLevel,
-                issue.Labels,
-                issue.CreateTime
-            }).FirstOrDefaultAsync();
+            var data = await context.Issues.Where(x => x.IssueId == id).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).FirstOrDefaultAsync();
             if (data == null)
             {
                 return new
@@ -304,9 +262,9 @@ namespace be.Repositories.IssueRepository
                 data
             };
         }
-        public async Task<object> AllIssue(int idUser)
+        public async Task<object> AllIssue()
         {
-            var data = await context.Issues.Where(x => x.ReporterId == idUser || x.AssigneeId == idUser).OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
+            var data = await context.Issues.OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataIssue(mapper.Map<IssueDTO>(x))).ToListAsync();
             return new
             {
                 status = 200,

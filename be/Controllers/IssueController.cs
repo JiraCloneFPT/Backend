@@ -232,11 +232,11 @@ namespace be.Controllers
             }
         }
         [HttpGet("allissue")]
-        public async Task<ActionResult<IEnumerable<IssueDTO>>> AllIssue(int idUser)
+        public async Task<ActionResult<IEnumerable<IssueDTO>>> AllIssue()
         {
             try
             {
-                var result = await _issueService.AllIssue(idUser);
+                var result = await _issueService.AllIssue();
                 return Ok(result);
             }
             catch

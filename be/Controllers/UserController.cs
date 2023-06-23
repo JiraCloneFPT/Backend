@@ -4,6 +4,7 @@ using be.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using be.DTOs;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace be.Controllers
 {
@@ -219,6 +220,26 @@ namespace be.Controllers
             {
                 var result = _userService.Login(login.Account, login.Password, _configuration);
                 return Ok(result);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+
+
+
+        [HttpGet("info")]
+        public async Task<ActionResult> GetInfo(string token)
+        {
+            try
+            {
+                if (token == "")
+                {
+                    return BadRequest();
+                }
+                return Ok(await _userService.GetInfo(token));
             }
             catch
             {

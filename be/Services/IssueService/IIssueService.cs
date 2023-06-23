@@ -17,7 +17,7 @@ namespace be.Services.IssueService
         // Create Issue
         Task<ResponseDTO> CreateIssue(IssueCreateDTO issue);
         Task<object> GetElement(int id);
-        Task<object> AllIssue(int idUser);
+        Task<object> AllIssue();
         Task<object> MyOpenIssue(int idUser);
         Task<object> ReportByMe(int idUser);
         // Get Issue By id

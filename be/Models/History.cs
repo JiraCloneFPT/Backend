@@ -7,6 +7,8 @@ public partial class History
 {
     public int HistoryId { get; set; }
 
+    public int EditorId { get; set; }
+
     public int? IssueId { get; set; }
 
     public int? ProjectId { get; set; }
@@ -103,5 +105,5 @@ public partial class History
 
     public string? Resolution { get; set; }
 
-    public DateTime UpdateTime { get; set; }
+    public DateTime CreateTime { get; set; }
 }
