@@ -21,5 +21,9 @@ namespace be.Services.UserService
         object Login(string accoount, string password, IConfiguration config);
         User UpdateUser(User user);
         User GetUserInformation(int userId);
+
+        #region HuyNG5 - code bổ sung
+        public object ChangePassword (int userId, string password);
+        #endregion
     }
 }

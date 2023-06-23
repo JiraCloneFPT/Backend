@@ -329,6 +329,7 @@ namespace be.Repositories.IssueRepository
                                 Key = p.ShortName + "-" + i.IssueId,
                                 Sumary = i.Summary,
                                 ReportId = i.ReporterId,
+                                IssueType = i.IssueTypeId,
                             }).Take(50).ToList();
             return result;
         }

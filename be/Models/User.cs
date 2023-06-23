@@ -28,4 +28,6 @@ public partial class User
     public virtual ICollection<Issue> IssueReporters { get; set; } = new List<Issue>();
 
     public virtual RoleUser? Role { get; set; }
+
+    public virtual ICollection<Watcher> Watchers { get; set; } = new List<Watcher>();
 }

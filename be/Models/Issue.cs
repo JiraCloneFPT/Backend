@@ -123,8 +123,6 @@ public partial class Issue
 
     public virtual Priority? Priority { get; set; }
 
-    public virtual Product? Product { get; set; }
-
     public virtual Project? Project { get; set; }
 
     public virtual Qcactivity? Qcactivity { get; set; }
@@ -136,4 +134,6 @@ public partial class Issue
     public virtual StatusIssue? StatusIssue { get; set; }
 
     public virtual TechnicalCause? TechnicalCause { get; set; }
+
+    public virtual ICollection<Watcher> Watchers { get; set; } = new List<Watcher>();
 }

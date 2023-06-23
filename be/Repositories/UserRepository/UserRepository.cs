@@ -84,7 +84,7 @@ namespace be.Repositories.UserRepository
             IList<Record> records = new List<Record>();
             return records; 
         }
-        public  string RemoveAccents(string input)
+        public string RemoveAccents(string input)
         {
             string decomposed = input.Normalize(NormalizationForm.FormD);
             StringBuilder builder = new StringBuilder();
@@ -98,7 +98,7 @@ namespace be.Repositories.UserRepository
             return builder.ToString();
         }
 
-        public  string ReplaceVietnameseCharacters(string text)
+        public string ReplaceVietnameseCharacters(string text)
         {
             Dictionary<char, char> replacements = new Dictionary<char, char>()
     {
@@ -278,5 +278,30 @@ namespace be.Repositories.UserRepository
             var user = _context.Users.FirstOrDefault(x => x.UserId == userId);
             return user;
         }
+
+        #region HUYNG5 - code bổ sung 
+        public object ChangePassword(int userId, string newPasword)
+        {
+            var getUser = _context.Users.SingleOrDefault(x => x.UserId == userId);
+            if(getUser == null)
+            {
+                return new
+                {
+                    status = 404,
+                    message = "Not found account"
+                };
+            } else
+            {
+                getUser.Password = newPasword;
+                _context.SaveChanges();
+                return new
+                {
+                    message = "Change password successfully",
+                    status = 200,
+                    data = getUser
+                };
+            }
+        }
+        #endregion
     }
 }

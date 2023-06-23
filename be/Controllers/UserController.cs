@@ -236,5 +236,21 @@ namespace be.Controllers
                 return BadRequest();
             }
         }
+
+        #region HuyNG5 - code bổ sung
+        [HttpPost("changePassword")]
+        public ActionResult ChangePassword (int userId, string password)
+        {
+            try
+            {
+                var result = _userService.ChangePassword(userId, password);
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+        #endregion
     }
 }

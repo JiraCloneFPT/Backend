@@ -18,6 +18,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json.Serialization;
+using be.Services.WatcherService;
+using be.Repositories.WatcherRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +65,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+
+builder.Services.AddScoped<IWatcherService, WatcherService>();
+builder.Services.AddScoped<IWatcherRepository, WatcherRepository>();
 
 var app = builder.Build();
 

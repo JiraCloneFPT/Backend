@@ -80,5 +80,12 @@ namespace be.Services.UserService
         {
             return _userRepository.GetUserById(id); 
         }
+
+        #region HuyNG5 - code bổ sung
+        public object ChangePassword(int userId, string password)
+        {
+            return _userRepository.ChangePassword(userId, password);
+        }
+        #endregion
     }
 }

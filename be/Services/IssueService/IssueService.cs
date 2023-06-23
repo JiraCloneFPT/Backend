@@ -3,6 +3,7 @@ using be.Models;
 using be.Repositories.IssueRepository;
 using be.Services.OtherService;
 using be.Services.UserService;
+using be.Services.WatcherService;
 
 namespace be.Services.IssueService
 {
@@ -15,12 +16,14 @@ namespace be.Services.IssueService
 
         private readonly IUserService _userService; 
 
+        private readonly IWatcherService _watcherService;
 
-        public IssueService(IIssueRepository issueRepository, IUserService userService)
+        public IssueService(IIssueRepository issueRepository, IUserService userService, IWatcherService watcherService)
         {
             _issueRepository = issueRepository;
 
             _userService = userService;
+            _watcherService = watcherService;
         }
 
         // Edit issue
@@ -111,7 +114,11 @@ namespace be.Services.IssueService
                 else
                 {
                     User assignee = _userService.GetUserById(issue.AssigneeId.Value); 
-                    EmailService.Instance.SendMailCreate(result, assignee); 
+                    EmailService.Instance.SendMailCreate(result, assignee);
+
+                    //HuyNG5 - auto add reporter to watcher
+                    _watcherService.StartWatcherIssue(result.ReporterId, result.IssueId);
+
                     return new ResponseDTO
                     {
                         code = 200,

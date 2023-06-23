@@ -5,6 +5,7 @@ using be.Models;
 using be.Services.IssueService;
 using be.Services.OtherService;
 using be.Services.UserService;
+using be.Services.WatcherService;
 using MailKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace be.Controllers
         private readonly Mapper mapper;
         private readonly HandleData handleData;
         private readonly DbJiraCloneContext _context;
+        private readonly IWatcherService _watcherService;
 
         private readonly IUserService _userService;
 
@@ -33,6 +35,7 @@ namespace be.Controllers
             _issueService = issueService;
             handleData = new HandleData();
             _userService = new UserService();
+            _watcherService = new WatcherService();
 
         }
 
@@ -81,6 +84,8 @@ namespace be.Controllers
                     return BadRequest();
                 }
                 var resData = await _issueService.CreateIssue(issue);
+
+
 
                 return Ok(resData);
             }
@@ -245,5 +250,82 @@ namespace be.Controllers
             }
         }
         #endregion
+
+
+        #region HuyNG5 - Code bổ sung
+        [HttpPost("startWatcher")]
+        public async Task<ActionResult> StartWatcher(int userId, int issueId)
+        {
+            try
+            {
+                var checkUser = _userService.GetUserById(userId);
+                if(checkUser == null)
+                {
+                    return BadRequest();
+                }
+                var checkIssue = _issueService.GetIssueById(issueId);
+                if(checkIssue == null)
+                {
+                    return BadRequest();
+                }
+                _watcherService.StartWatcherIssue(userId, issueId);
+                return Ok(_watcherService.CountWatcher(issueId));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpPost("stopWatcher")]
+        public async Task<ActionResult> StopWatcher(int userId, int issueId)
+        {
+            try
+            {
+                var checkUser = _userService.GetUserById(userId);
+                if (checkUser == null)
+                {
+                    return BadRequest();
+                }
+                var checkIssue = _issueService.GetIssueById(issueId);
+                if (checkIssue == null)
+                {
+                    return BadRequest();
+                }
+                _watcherService.StopWatcherIssue(userId, issueId);
+                return Ok(_watcherService.CountWatcher(issueId));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet("countWatcher")]
+        public async Task<ActionResult> CountWatcher (int issueId)
+        {
+            try
+            {
+                return Ok(_watcherService.CountWatcher(issueId));
+            } catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet("checkWatcher")]
+        public async Task<ActionResult> CheckWatcher (int userId, int issueId)
+        {
+            try
+            {
+                return Ok(_watcherService.CheckWatcher(userId, issueId));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
     }
 }
+
