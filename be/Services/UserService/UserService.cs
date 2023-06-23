@@ -80,5 +80,16 @@ namespace be.Services.UserService
         {
             return _userRepository.GetUserById(id); 
         }
+
+        // PhuNV17
+        public void AddUserByExcel(User user)
+        {
+            _userRepository.AddUserByExcel(user); 
+        }
+
+        public IList<User> GetAllAccount(string account)
+        {
+            return _userRepository.GetAllAccount(account);
+        }
     }
 }

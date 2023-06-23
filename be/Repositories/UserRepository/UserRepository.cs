@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using be.Services.OtherService;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace be.Repositories.UserRepository
 {
@@ -49,6 +50,13 @@ namespace be.Repositories.UserRepository
                 };
             }
             return user;
+        }
+
+        // PhuNV17 function
+        public void AddUserByExcel(User user)
+        {
+            _context.Users.Add(user);
+            _context.SaveChanges();
         }
         public IList<User> GetAllUser()
         {
@@ -277,6 +285,15 @@ namespace be.Repositories.UserRepository
         {
             var user = _context.Users.FirstOrDefault(x => x.UserId == userId);
             return user;
+        }
+
+        // PhuNV17
+        public  IList<User> GetAllAccount(string account)
+        {
+            IList<User> accounts = new List<User>();
+            accounts = _context.Users.Where(user => user.AccountName == account).ToList();
+            return accounts;
+
         }
     }
 }

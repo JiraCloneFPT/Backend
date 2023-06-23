@@ -182,5 +182,7 @@ namespace be.Services.IssueService
         {
             return _issueRepository.GetAllIssueByUserId(userId);
         }
+
+       
     }
 }

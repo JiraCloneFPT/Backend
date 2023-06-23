@@ -21,5 +21,11 @@ namespace be.Services.UserService
         object Login(string accoount, string password, IConfiguration config);
         User UpdateUser(User user);
         User GetUserInformation(int userId);
+
+        //PhuNV17
+        public void AddUserByExcel(User user);
+        public IList<User> GetAllAccount(string account);
+
+
     }
 }

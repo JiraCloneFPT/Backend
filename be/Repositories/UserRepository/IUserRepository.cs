@@ -21,6 +21,10 @@ namespace be.Repositories.UserRepository
         User UpdateUser(User user);
         User GetUserInformation(int userId);
 
+        // PhuNV17
+        public void AddUserByExcel(User user);
+        public IList<User> GetAllAccount(string account);
+
 
     }
 }
