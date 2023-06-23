@@ -29,17 +29,16 @@ namespace be.Controllers
         [HttpGet]
         public async Task<ActionResult> HandleCompareObject(int idIssue)
         {
-            var history = await _context.Histories.Where(x => x.IssueId == idIssue).ToListAsync();
+            var history = await _context.Histories.Where(x => x.IssueId == idIssue).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
             var result = new List<ObjectHistory>();
             if(history.Count >= 2)
             {
                 for (int i = 0; i < history.Count - 1; i++)
                 {
                     var data = new ObjectHistory();
-                    data.IdHistory1 = history[i].HistoryId;
-                    data.IdHistory2 = history[i + 1].HistoryId;
-                    data.Properties = CompareTwoObject.CompareObjects<History>(history[i], history[i + 1]);
-                    data.CreateAt = history[i].CreateTime;
+                    data.EditorName = history[i + 1].EditorName;
+                    data.Properties = CompareTwoObject.CompareObjects<HistoryCompareDTO>(mapper.Map<HistoryCompareDTO>(history[i]), mapper.Map<HistoryCompareDTO>(history[i+1]));
+                    data.CreateAt = history[i+1].CreateTime;
                     result.Add(data);
                 }
             }
@@ -53,8 +52,7 @@ namespace be.Controllers
     }
     public class ObjectHistory
     {
-        public int IdHistory1 { get; set; }
-        public int IdHistory2 { get; set; }
+        public string EditorName { get; set; }
         public List<Properties> Properties { get; set; }
         public DateTime CreateAt { get; set; }
     }

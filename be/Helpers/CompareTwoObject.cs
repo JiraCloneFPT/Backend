@@ -1,9 +1,17 @@
-﻿using System.Reflection;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace be.Helpers
 {
     public static class CompareTwoObject
     {
+        public static string CutString (string name)
+        {
+            string[] words = Regex.Split(name, @"(?<!^)(?=[A-Z][^A-Z]+$)");
+            return string.Join(" ", words);
+
+        }
         public static List<Properties> CompareObjects<T>(T obj1, T obj2)
         {
             List<Properties> differences = new List<Properties>();
@@ -19,9 +27,9 @@ namespace be.Helpers
                 if (!Equals(value1, value2))
                 {
                     Properties difference = new Properties();
-                    difference.Property = property.Name;
-                    difference.Value1 = value1;
-                    difference.Value2 = value2;
+                    difference.Property = CutString(property.Name);
+                    difference.Orginal = value1;
+                    difference.New = value2;
                     differences.Add(difference);
                 }
             }
@@ -32,7 +40,7 @@ namespace be.Helpers
     public class Properties
     {
         public string Property { get; set; }
-        public object Value1 { get; set; }
-        public object Value2 { get; set; }
+        public object Orginal { get; set; }
+        public object New { get; set; }
     }
 }

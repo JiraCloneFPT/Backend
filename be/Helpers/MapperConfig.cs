@@ -12,6 +12,8 @@ namespace be.Helpers
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Issue, IssueDTO>();
+                cfg.CreateMap<History, HistoryDTO>();
+                cfg.CreateMap<HistoryDTO, HistoryCompareDTO>();
             });
             var mapper = new Mapper(config);
             return mapper;
