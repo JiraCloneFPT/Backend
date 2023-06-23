@@ -10,6 +10,8 @@ namespace be.Repositories.IssueRepository
     /// </summary>
     public interface IIssueRepository : IBaseRepository<Issue>
     {
+        Task<History> CreateHistoryIssue(Issue issue, int userId);
+
         Task<bool> AddFile(IFormFile file, Issue issue);
 
         // Edit Issue
