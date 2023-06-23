@@ -1,5 +1,6 @@
 ﻿using be.Models;
 using be.Repositories.UserRepository;
+using Microsoft.AspNetCore.Mvc;
 
 namespace be.Services.UserService
 {
@@ -79,6 +80,21 @@ namespace be.Services.UserService
         public User GetUserById(int id)
         {
             return _userRepository.GetUserById(id); 
+        }
+        public async Task<object> GetInfo(string token)
+        {
+            return await _userRepository.GetInfo(token);
+        }
+
+        // PhuNV17
+        public void AddUserByExcel(User user)
+        {
+            _userRepository.AddUserByExcel(user); 
+        }
+
+        public IList<User> GetAllAccount(string account)
+        {
+            return _userRepository.GetAllAccount(account);
         }
 
         #region HuyNG5 - code bổ sung

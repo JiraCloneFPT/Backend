@@ -181,13 +181,15 @@ namespace be.Services.IssueService
         {
             return await _issueRepository.ReportByMe(idUser);
         }
-        public async Task<object> AllIssue(int idUser)
+        public async Task<object> AllIssue()
         {
-            return await _issueRepository.AllIssue(idUser);
+            return await _issueRepository.AllIssue();
         }
         public IList<ShortDesIssue> GetAllIssueByUserId(int userId)
         {
             return _issueRepository.GetAllIssueByUserId(userId);
         }
+
+       
     }
 }

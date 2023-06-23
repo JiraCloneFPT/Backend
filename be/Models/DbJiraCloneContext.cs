@@ -141,6 +141,9 @@ public partial class DbJiraCloneContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.ClosedDate).HasColumnType("date");
+            entity.Property(e => e.CreateTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.DueDate).HasColumnType("date");
             entity.Property(e => e.DueTime)
                 .HasMaxLength(55)
@@ -196,9 +199,6 @@ public partial class DbJiraCloneContext : DbContext
             entity.Property(e => e.Units)
                 .HasMaxLength(100)
                 .IsUnicode(false);
-            entity.Property(e => e.UpdateTime)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
             entity.Property(e => e.ValuePoint)
                 .HasMaxLength(55)
                 .IsUnicode(false);

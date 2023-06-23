@@ -1,4 +1,5 @@
 ﻿using be.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace be.Repositories.UserRepository
 {
@@ -22,6 +23,12 @@ namespace be.Repositories.UserRepository
         User UpdateUser(User user);
         User GetUserInformation(int userId);
 
+        // PhuNV17
+        public void AddUserByExcel(User user);
+        public IList<User> GetAllAccount(string account);
+
+
+        Task<object> GetInfo(string token);
         #region HuyNG5 - code bổ sung
         public object ChangePassword(int userId, string newPasword);
         #endregion

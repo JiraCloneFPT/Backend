@@ -51,7 +51,7 @@ namespace be.Services.OtherService
                     Text = _text
                 };
                 var smtp = new SmtpClient();
-                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.ConnectAsync("smtp.gmail.com", 587, false);
                 await smtp.AuthenticateAsync("jira.service.fpt@gmail.com", "hcjizzxjmyobukzt");
                 await smtp.SendAsync(email);
                 await smtp.DisconnectAsync(true);
