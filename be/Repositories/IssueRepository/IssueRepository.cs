@@ -79,12 +79,12 @@ namespace be.Repositories.IssueRepository
                 history.Units = issue.Units;
                 history.PercentDone = issue.PercentDone;
                 history.StatusIssueId = ((int)Commons.StatusIssue.Open);
-                history.CreateTime = dateTime;
+                history.UpdateTime = dateTime;
 
                 await context.Histories.AddAsync(history);
                 await context.SaveChangesAsync();
 
-                var lastHistory = context.Histories.Where(e => e.CreateTime == dateTime).FirstOrDefault();
+                var lastHistory = context.Histories.Where(e => e.UpdateTime == dateTime).FirstOrDefault();
 
                 return lastHistory;
             }
