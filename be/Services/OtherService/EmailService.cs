@@ -35,12 +35,10 @@ namespace be.Services.OtherService
                 if (type == 1)
                 {
                     _text = EmailHelper.Instance.BodyReset(password);
-                }
-                if (type == 2)
+                } else if (type == 2)
                 {
                     _text = EmailHelper.Instance.Body(fullname, account, password);
-                }
-                if (type == 3)
+                }else
                 {
                     _text = EmailHelper.Instance.BodyUpdate(fullname, account, password);
                 }
@@ -53,8 +51,8 @@ namespace be.Services.OtherService
                     Text = _text
                 };
                 var smtp = new SmtpClient();
-                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                await smtp.AuthenticateAsync("jira.service.fpt@gmail.com", "dvjgqyaqzugkciif");
+                await smtp.ConnectAsync("smtp.gmail.com", 587, false);
+                await smtp.AuthenticateAsync("jira.service.fpt@gmail.com", "hcjizzxjmyobukzt");
                 await smtp.SendAsync(email);
                 await smtp.DisconnectAsync(true);
                 return true;

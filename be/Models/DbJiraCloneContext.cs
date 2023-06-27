@@ -55,9 +55,11 @@ public partial class DbJiraCloneContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<Watcher> Watchers { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=Admin;Initial Catalog=dbJiraClone;Integrated Security=True;encrypt=false");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-B9LVRBH\\SQLEXPRESS;Initial Catalog=dbJiraClone;Integrated Security=True;encrypt=false");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -139,9 +141,6 @@ public partial class DbJiraCloneContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.ClosedDate).HasColumnType("date");
-            entity.Property(e => e.CreateTime)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
             entity.Property(e => e.DueDate).HasColumnType("date");
             entity.Property(e => e.DueTime)
                 .HasMaxLength(55)
@@ -197,6 +196,9 @@ public partial class DbJiraCloneContext : DbContext
             entity.Property(e => e.Units)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.UpdateTime)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.ValuePoint)
                 .HasMaxLength(55)
                 .IsUnicode(false);
@@ -308,6 +310,10 @@ public partial class DbJiraCloneContext : DbContext
             entity.HasOne(d => d.Priority).WithMany(p => p.Issues)
                 .HasForeignKey(d => d.PriorityId)
                 .HasConstraintName("FK_Issue_Priority");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.Issues)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_Issue_Product");
 
             entity.HasOne(d => d.Project).WithMany(p => p.Issues)
                 .HasForeignKey(d => d.ProjectId)
@@ -463,6 +469,21 @@ public partial class DbJiraCloneContext : DbContext
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("FK_User_RoleUser");
+        });
+
+        modelBuilder.Entity<Watcher>(entity =>
+        {
+            entity.ToTable("Watcher");
+
+            entity.HasOne(d => d.Issue).WithMany(p => p.Watchers)
+                .HasForeignKey(d => d.IssueId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Watcher_Issue");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Watchers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Watcher_User");
         });
 
         OnModelCreatingPartial(modelBuilder);

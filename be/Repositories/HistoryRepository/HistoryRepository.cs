@@ -21,7 +21,7 @@ namespace be.Repositories.HistoryRepository
 
         public async Task<List<ObjectHistory>> HandleCompareObject(int idIssue)
         {
-            var history = await _context.Histories.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
+            var history = await _context.Histories.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.UpdateTime).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
             var result = new List<ObjectHistory>();
             if (history.Count >= 2)
             {
@@ -39,7 +39,7 @@ namespace be.Repositories.HistoryRepository
         }
         public async Task<object> GetElementFirst(int idIssue)
         {
-            var history = await _context.Histories.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.CreateTime).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
+            var history = await _context.Histories.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.UpdateTime).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
             return new
             {
                 status = 200,

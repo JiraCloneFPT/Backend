@@ -5,6 +5,8 @@ using be.Models;
 using be.Services.IssueService;
 using be.Services.OtherService;
 using be.Services.UserService;
+using be.Services.WatcherService;
+using DocumentFormat.OpenXml.Bibliography;
 using MailKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,7 @@ namespace be.Controllers
         private readonly Mapper mapper;
         private readonly HandleData handleData;
         private readonly DbJiraCloneContext _context;
+        private readonly IWatcherService _watcherService;
 
         private readonly IUserService _userService;
 
@@ -33,12 +36,118 @@ namespace be.Controllers
             _issueService = issueService;
             handleData = new HandleData();
             _userService = new UserService();
+            _watcherService = new WatcherService();
 
+        }
+        // remove File Issue
+        [HttpDelete("removeFile")]
+        public async Task<ActionResult> RemoveFile(int fileId)
+        {
+            try
+            {
+                var resData = await _issueService.RemoveFile(fileId);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // cancel Issue
+        [HttpPost("addFile")]
+        public async Task<ActionResult> AddFile([FromForm] FileDTO fileDTO)
+        {
+            try
+            {
+                if (fileDTO == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.AddFile(fileDTO);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // cancel Issue
+        [HttpGet("getFilesIssue")]
+        public async Task<ActionResult> GetFilesIssue(int issueId)
+        {
+            try
+            {
+                var resData = await _issueService.GetFilesIssue(issueId);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // cancel Issue
+        [HttpPut("cancel")]
+        public async Task<ActionResult> CancelIssue([FromForm] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.CancelIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // close Issue
+        [HttpPut("close")]
+        public async Task<ActionResult> CloseIssue([FromForm] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.CloseIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // resolve Issue
+        [HttpPut("resolve")]
+        public async Task<ActionResult> ResloveIssue([FromForm] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.ResolveIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         // Edit Issue
-        [HttpPost("edit")]
-        public async Task<ActionResult> Edit([FromBody] IssueCreateDTO issue)
+        [HttpPut("edit")]
+        public async Task<ActionResult> Edit([FromForm] IssueCreateDTO issue)
         {
             try
             {
@@ -62,26 +171,6 @@ namespace be.Controllers
             try
             {
                 var resData = await _issueService.GetIssueById(id);
-                return Ok(resData);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        // Create Issue
-        [HttpPost("add")]
-        public async Task<ActionResult> Add([FromBody] IssueCreateDTO issue)
-        {
-            try
-            {
-                if (issue == null)
-                {
-                    return BadRequest();
-                }
-                var resData = await _issueService.CreateIssue(issue);
-
                 return Ok(resData);
             }
             catch (Exception ex)
@@ -245,5 +334,89 @@ namespace be.Controllers
             }
         }
         #endregion
+
+
+        #region HuyNG5 - Code bổ sung
+        [HttpPost("startWatcher")]
+        public async Task<ActionResult> StartWatcher(int userId, int issueId)
+        {
+            try
+            {
+                var checkUser = _userService.GetUserById(userId);
+                if(checkUser == null)
+                {
+                    return BadRequest();
+                }
+                var checkIssue = _issueService.GetIssueById(issueId);
+                if(checkIssue == null)
+                {
+                    return BadRequest();
+                }
+                _watcherService.StartWatcherIssue(userId, issueId);
+                return Ok(new {
+                    message = "Start successfully",
+                    status = 200,
+                });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpPost("stopWatcher")]
+        public async Task<ActionResult> StopWatcher(int userId, int issueId)
+        {
+            try
+            {
+                var checkUser = _userService.GetUserById(userId);
+                if (checkUser == null)
+                {
+                    return BadRequest();
+                }
+                var checkIssue = _issueService.GetIssueById(issueId);
+                if (checkIssue == null)
+                {
+                    return BadRequest();
+                }
+                _watcherService.StopWatcherIssue(userId, issueId);
+                return Ok(new
+                {
+                    message = "Stop successfully",
+                    status = 200,
+                });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet("countWatcher")]
+        public async Task<ActionResult> CountWatcher (int issueId)
+        {
+            try
+            {
+                return Ok(_watcherService.CountWatcher(issueId));
+            } catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet("checkWatcher")]
+        public async Task<ActionResult> CheckWatcher (int issueId, int userId)
+        {
+            try
+            {
+                return Ok(_watcherService.CheckWatcher(issueId, userId));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
     }
 }
+

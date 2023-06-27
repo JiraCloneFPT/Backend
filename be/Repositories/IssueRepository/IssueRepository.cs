@@ -4,6 +4,8 @@ using be.DTOs;
 using be.Helpers;
 using be.Models;
 using be.Repositories.BaseRepository;
+//using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
 using Component = be.Models.Component;
 
@@ -14,20 +16,190 @@ namespace be.Repositories.IssueRepository
     /// <summary>
     /// Issue Repository
     /// </summary> 
-    public class IssueRepository : BaseRepository<Issue>, IIssueRepository
+    public class IssueRepository : BaseRepository<Models.Issue>, IIssueRepository
     {
         private readonly HandleData handleData;
         private readonly Mapper mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+
         public IssueRepository(DbJiraCloneContext context, IWebHostEnvironment webHostEnvironment) : base(context)
         {
             _webHostEnvironment = webHostEnvironment;
             mapper = MapperConfig.InitializeAutomapper();
             handleData = new HandleData();
-
         }
 
-        public async Task<bool> AddFile(IFormFile file, Issue issue)
+        public async Task<bool> ChangeStatus(int issueId, int statusIssueId)
+        {
+            try
+            {
+                var issue = context.Issues.Where(e => e.IssueId.Equals(issueId)).FirstOrDefault();
+                if(issue == null)
+                {
+                    issue.StatusIssueId = statusIssueId;
+                    context.Issues.Update(issue);
+                    var numUpdated = context.SaveChanges();
+                    return numUpdated > 0 ? true : false;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> AddComment(int issueId, int userId, string comment)
+        {
+            try
+            {
+                Models.Comment newComment = new Models.Comment();
+                var dateTime = DateTime.Now;
+                newComment.UserId = userId;
+                newComment.IssueId = issueId;
+                newComment.CommentContent = comment;
+                newComment.CreatedAt = dateTime;
+                context.Comments.Add(newComment);
+                var numComment = context.SaveChanges();
+                return numComment > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> RemoveFile(int fileId)
+        {
+            try
+            {
+                var file = context.FileAttachments.Where(e => e.FileAttachmentId.Equals(fileId)).FirstOrDefault();
+                if (file != null)
+                {
+                    string path = Path.Combine(_webHostEnvironment.WebRootPath + "/AttachFiles/", file.FileName);
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                    context.FileAttachments.Remove(file);
+                    var numRemoved = context.SaveChanges();
+                    return numRemoved > 0 ? true : false;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<object>> GetFilesIssue(int issueId)
+        {
+            try
+            {
+                var listFile = (from f in context.FileAttachments
+                               join i in context.Issues on f.IssueId equals i.IssueId
+                               where f.IssueId == issueId
+                               select new FileAttachment
+                               {
+                                   FileAttachmentId = f.FileAttachmentId,
+                                   FilePath = f.FilePath,
+                                   FileName = f.FileName
+                               }).ToList();
+
+                List<object> fileList = new List<object>();
+
+                foreach (var file in listFile)
+                {
+                    byte[] fileBytes = System.IO.File.ReadAllBytes(file.FilePath);
+                    string base64String = Convert.ToBase64String(fileBytes);
+
+                    fileList.Add(new
+                    {
+                        Id = file.FileAttachmentId,
+                        Name = file.FileName,
+                        Content = base64String
+                    });
+                }
+
+                return fileList;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+    
+
+        public async Task<History> CreateHistoryIssue(Models.Issue issue, int userId)
+        {
+            try
+            {
+                History history = new History();
+                var dateTime = DateTime.Now;
+                history.IssueId = issue.IssueId;
+                history.EditorId = userId;
+                history.ProjectId = issue.ProjectId;
+                history.IssueTypeId = issue.IssueTypeId;
+                history.ComponentId = issue.ComponentId;
+                history.ProductId = issue.ProductId;
+                history.ReporterId = issue.ReporterId;
+                history.AssigneeId = issue.AssigneeId;
+                history.Summary = issue.Summary;
+                history.Description = issue.Description;
+                history.DescriptionTranslate = issue.DescriptionTranslate;
+                history.FixVersion = issue.FixVersion;
+                history.DefectOriginId = issue.DefectTypeId;
+                history.PriorityId = issue.PriorityId;
+                history.Severity = issue.Severity;
+                history.QcactivityId = issue.QcactivityId;
+                history.AffectsVersion = issue.AffectsVersion;
+                history.CauseAnalysis = issue.CauseAnalysis;
+                history.CauseAnalysisTranslate = issue.CauseAnalysisTranslate;
+                history.TechnicalCauseId = issue.TechnicalCauseId;
+                history.Environment = issue.Environment;
+                history.RoleIssueId = issue.RoleIssueId;
+                history.PlannedStart = issue.PlannedStart;
+                history.OriginalEstimate = issue.OriginalEstimate;
+                history.RemainingEstimate = issue.RemaningEstimate;
+                history.EstimateEffort = issue.EstimateEffort;
+                history.Complexity = issue.Complexity;
+                history.AdjustVp = issue.AdjustedVp;
+                history.ValuePoint = issue.ValuePoint;
+                history.DueDate = issue.DueDate;
+                history.Labels = issue.Labels;
+                history.Sprint = issue.Sprint;
+                history.FunctionId = issue.FunctionId;
+                history.TestcaseId = issue.TestcaseId;
+                history.FunctionCategory = issue.FunctionCategory;
+                //newIssue.LinkedIssueId // not match in db 
+                history.Issue = issue.Issue1;   // issue 
+                history.EpicLink = issue.EpicLink;
+                history.ClosedDate = issue.ClosedDate;
+                history.SecurityLevel = issue.SecurityLevel;
+                history.DefectTypeId = issue.DefectTypeId;
+                history.CauseCategoryId = issue.CauseCategoryId;
+                history.LeakCauseId = issue.LeakCauseId;
+                history.DueTime = issue.DueTime;
+                history.Units = issue.Units;
+                history.PercentDone = issue.PercentDone;
+                history.UpdateTime = dateTime;
+                history.StatusIssueId = issue.StatusIssueId; //
+
+                await context.Histories.AddAsync(history);
+                await context.SaveChangesAsync();
+
+                var lastHistory = context.Histories.Where(e => e.UpdateTime == dateTime).FirstOrDefault();
+
+                return lastHistory;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> AddFile(IFormFile file, Models.Issue issue)
         {
             try
             {
@@ -56,19 +228,19 @@ namespace be.Repositories.IssueRepository
         }
 
         // Edit Issue
-        public async Task<Issue> EditIssue(IssueCreateDTO issue)
+        public async Task<Models.Issue> EditIssue(IssueCreateDTO issue, int statusIssueId)
         {
             try
             {
                 var issueEdit = context.Issues.Where(e => e.IssueId == issue.IssueId).FirstOrDefault();
                 if (issueEdit != null)
                 {
-                    issueEdit.Summary = issue.Summary;
+                    issueEdit.Summary = issue?.Summary;
                     issueEdit.ComponentId = issue.ComponentId;
                     issueEdit.ProductId = issue.ProductId;
                     issueEdit.Description = issue.Description;
                     issueEdit.DescriptionTranslate = issue.DescriptionTranslate;
-                    issueEdit.DefectOriginId = issue.DefectTypeId;
+                    issueEdit.DefectOriginId = issue.DefectOriginId;
                     issueEdit.PriorityId = issue.PriorityId;
                     issueEdit.Severity = issue.Severity;
                     issueEdit.QcactivityId = issue.QcactivityId;
@@ -88,13 +260,12 @@ namespace be.Repositories.IssueRepository
                     issueEdit.Complexity = issue.Complexity;
                     issueEdit.AdjustedVp = issue.AdjustedVp;
                     issueEdit.DueDate = issue.DueDate;
-                    //attach
                     issueEdit.Labels = issue.Labels;
                     issueEdit.Sprint = issue.Sprint;
                     issueEdit.FunctionId = issue.FunctionId;
                     issueEdit.TestcaseId = issue.TestcaseId;
                     issueEdit.FunctionCategory = issue.FunctionCategory;
-                    //issueEdit.LinkedIssueId  // field is't have in db 
+                    //issueEdit.LinkedIssueId  // field not have in db 
                     issueEdit.Issue1 = issue.Issue1;  // mockIssueId
                     issueEdit.EpicLink = issue.EpicLink;
                     issueEdit.ClosedDate = issue.ClosedDate;
@@ -105,6 +276,8 @@ namespace be.Repositories.IssueRepository
                     issueEdit.DueTime = issue.DueTime;
                     issueEdit.Units = issue.Units;
                     issueEdit.PercentDone = issue.PercentDone;
+                    issueEdit.Resolution = issue.Resolution; // 
+                    issueEdit.StatusIssueId = statusIssueId;
                     //comment
 
                     context.Issues.Update(issueEdit);
@@ -120,11 +293,11 @@ namespace be.Repositories.IssueRepository
         }
 
         // Create Issue
-        public async Task<Issue> CreateIssue(IssueCreateDTO issue)
+        public async Task<Models.Issue> CreateIssue(IssueCreateDTO issue)
         {
             try
             {
-                Issue newIssue = new Issue();
+                Models.Issue newIssue = new Models.Issue();
                 var dateTime = DateTime.Now;
 
                 newIssue.ProjectId = issue.ProjectId;
@@ -200,8 +373,8 @@ namespace be.Repositories.IssueRepository
                 DefectOrigins = context.DefectOrigins.Select(e => new DefectOrigin { DefectOriginId = e.DefectOriginId, DefectOriginName = e.DefectOriginName }).ToList(),
                 Priorities = context.Priorities.ToList(),
                 Severities = enumCommon.Severitys,
-                QCActivities = context.Qcactivities.Select(e => new Qcactivity { QcactivityId = e.QcactivityId, QcactivityName = e.QcactivityName }).Take(10).ToList(),
-                TechnicalCauses = context.TechnicalCauses.Select(e => new TechnicalCause { TechnicalCauseId = e.TechnicalCauseId, TechnicalCauseName = e.TechnicalCauseName }).Take(10).ToList(),
+                QCActivities = context.Qcactivities.Select(e => new Qcactivity { QcactivityId = e.QcactivityId, QcactivityName = e.QcactivityName }).ToList(),
+                TechnicalCauses = context.TechnicalCauses.Select(e => new TechnicalCause { TechnicalCauseId = e.TechnicalCauseId, TechnicalCauseName = e.TechnicalCauseName }).ToList(),
                 Assignees = context.Users.Select(e => new User { UserId = e.UserId, AccountName = e.AccountName }).ToList(),
                 Roles = context.RoleUsers.Select(e => new RoleUser { RoleId = e.RoleId, RoleName = e.RoleName }).ToList(),
                 Reporters = context.Users.Select(e => new User { UserId = e.UserId, AccountName = e.AccountName }).ToList(),
@@ -213,7 +386,7 @@ namespace be.Repositories.IssueRepository
                 //Issues = context.Issues.Select(e => new Issue { IssueId = e.IssueId, Summary = e.Summary }).Take(10).ToList(),
                 EpicLinks = enumCommon.EpicLinks,
                 SecurityLevels = enumCommon.SecurityLevels,
-                DefectTypes = context.DefectTypes.Select(e => new DefectType { DefectTypeId = e.DefectTypeId, DefectTypeName = e.DefectTypeName }).Take(10).ToList(),
+                DefectTypes = context.DefectTypes.Select(e => new DefectType { DefectTypeId = e.DefectTypeId, DefectTypeName = e.DefectTypeName }).ToList(),
                 CauseCategories = context.CauseCategories.Select(e => new CauseCategory { CauseCategoryId = e.CauseCategoryId, CauseCategoryName = e.CauseCategoryName }).ToList(),
                 LeakCauses = context.LeakCauses.Select(e => new LeakCause { LeakCauseId = e.LeakCauseId, LeakCauseName = e.LeakCauseName }).ToList(),
 
@@ -287,10 +460,11 @@ namespace be.Repositories.IssueRepository
                                 Key = p.ShortName + "-" + i.IssueId,
                                 Sumary = i.Summary,
                                 ReportId = i.ReporterId,
+                                IssueType = i.IssueTypeId,
                             }).Take(50).ToList();
             return result;
         }
-    }
 
+    }
 
 }

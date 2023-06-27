@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using be.Services.OtherService;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 
 namespace be.Repositories.UserRepository
@@ -51,6 +52,13 @@ namespace be.Repositories.UserRepository
             }
             return user;
         }
+
+        // PhuNV17 function
+        public void AddUserByExcel(User user)
+        {
+            _context.Users.Add(user);
+            _context.SaveChanges();
+        }
         public IList<User> GetAllUser()
         {
             //return _context.Users.Where(user => user.RoleId == 1).ToList();
@@ -85,7 +93,7 @@ namespace be.Repositories.UserRepository
             IList<Record> records = new List<Record>();
             return records; 
         }
-        public  string RemoveAccents(string input)
+        public string RemoveAccents(string input)
         {
             string decomposed = input.Normalize(NormalizationForm.FormD);
             StringBuilder builder = new StringBuilder();
@@ -99,7 +107,7 @@ namespace be.Repositories.UserRepository
             return builder.ToString();
         }
 
-        public  string ReplaceVietnameseCharacters(string text)
+        public string ReplaceVietnameseCharacters(string text)
         {
             Dictionary<char, char> replacements = new Dictionary<char, char>()
     {
@@ -280,6 +288,31 @@ namespace be.Repositories.UserRepository
             return user;
         }
 
+        #region HUYNG5 - code bổ sung 
+        public object ChangePassword(int userId, string newPasword)
+        {
+            var getUser = _context.Users.SingleOrDefault(x => x.UserId == userId);
+            if(getUser == null)
+            {
+                return new
+                {
+                    status = 404,
+                    message = "Not found account"
+                };
+            } else
+            {
+                getUser.Password = newPasword;
+                _context.SaveChanges();
+                return new
+                {
+                    message = "Change password successfully",
+                    status = 200,
+                    data = getUser
+                };
+            }
+        }
+        #endregion
+
 
 
         public async Task<object> GetInfo(string token)
@@ -310,6 +343,15 @@ namespace be.Repositories.UserRepository
                 status = 200,
                 data = user,
             };
+        }
+
+        // PhuNV17
+        public  IList<User> GetAllAccount(string account)
+        {
+            IList<User> accounts = new List<User>();
+            accounts = _context.Users.Where(user => user.AccountName == account).ToList();
+            return accounts;
+
         }
     }
 }

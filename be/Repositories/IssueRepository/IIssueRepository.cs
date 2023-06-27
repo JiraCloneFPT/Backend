@@ -10,10 +10,20 @@ namespace be.Repositories.IssueRepository
     /// </summary>
     public interface IIssueRepository : IBaseRepository<Issue>
     {
+        Task<bool> ChangeStatus(int issueId, int statusIssueId);
+
+        Task<bool> AddComment(int issueId, int userId, string comment);
+
+        Task<bool> RemoveFile(int fileId);
+
+        Task<List<object>> GetFilesIssue(int issueId);
+
+        Task<History> CreateHistoryIssue(Issue issue, int userId);
+
         Task<bool> AddFile(IFormFile file, Issue issue);
 
         // Edit Issue
-        Task<Issue> EditIssue(IssueCreateDTO issue);
+        Task<Issue> EditIssue(IssueCreateDTO issue, int statusIssueId);
 
         // Get Items select list to Create Issue
         Task<ListItemsOfIssueDTO> GetItemsIssue();

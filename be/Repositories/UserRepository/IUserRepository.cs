@@ -13,7 +13,8 @@ namespace be.Repositories.UserRepository
 
         public  string ReplaceVietnameseCharacters(string text);
 
-        public User GetUserById(int id); 
+        public User GetUserById(int id);
+
         //Phần của Huy
         object AddUser(User user);
         IList<string> GetAllEmailUser();
@@ -22,6 +23,14 @@ namespace be.Repositories.UserRepository
         User UpdateUser(User user);
         User GetUserInformation(int userId);
 
+        // PhuNV17
+        public void AddUserByExcel(User user);
+        public IList<User> GetAllAccount(string account);
+
+
         Task<object> GetInfo(string token);
+        #region HuyNG5 - code bổ sung
+        public object ChangePassword(int userId, string newPasword);
+        #endregion
     }
 }

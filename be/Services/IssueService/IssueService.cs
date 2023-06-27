@@ -3,6 +3,9 @@ using be.Models;
 using be.Repositories.IssueRepository;
 using be.Services.OtherService;
 using be.Services.UserService;
+using be.Services.WatcherService;
+using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace be.Services.IssueService
 {
@@ -15,12 +18,231 @@ namespace be.Services.IssueService
 
         private readonly IUserService _userService; 
 
+        private readonly IWatcherService _watcherService;
 
-        public IssueService(IIssueRepository issueRepository, IUserService userService)
+        public IssueService(IIssueRepository issueRepository, IUserService userService, IWatcherService watcherService)
         {
             _issueRepository = issueRepository;
 
             _userService = userService;
+            _watcherService = watcherService;
+        }
+
+
+        public async Task<ResponseDTO> RemoveFile(int fileId)
+        {
+            try
+            {
+                var isRemoved = await _issueRepository.RemoveFile(fileId);
+                if (isRemoved)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "RemoveFile Success!",
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "RemoveFile Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> AddFile(FileDTO fileDTO)
+        {
+            try
+            {
+                var issue = await _issueRepository.GetByIdAsync(fileDTO.IssueId);
+                var result = await _issueRepository.AddFile(fileDTO.AttachFile, issue);
+                if (result != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "AddFile Success!",
+                        data = result
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "AddFile Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        // GetFilesIssue
+        public async Task<ResponseDTO> GetFilesIssue(int issueId)
+        {
+            try
+            {
+                var result = await _issueRepository.GetFilesIssue(issueId);
+                if (result != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "GetFilesIssue Success!",
+                        data = result
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "GetFilesIssue Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        // CancelIssue
+        public async Task<ResponseDTO> CancelIssue(IssueCreateDTO issue)
+        {
+            try
+            {
+                var issueEdited = await _issueRepository.EditIssue(issue, ((int)Commons.StatusIssue.Cancelled));
+                if (issue.AttachFile != null)
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
+                if (issueEdited != null && historyCreated != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Edit Issue and Add history success!",
+                        data = issueEdited
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Edit Issue OR Add History Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        // CloseIssue
+        public async Task<ResponseDTO> CloseIssue(IssueCreateDTO issue)
+        {
+            try
+            {
+                var issueEdited = await _issueRepository.EditIssue(issue, ((int)Commons.StatusIssue.Closed));
+                if (issue.AttachFile != null)
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
+                if (issueEdited != null && historyCreated != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Edit Issue and Add history success!",
+                        data = issueEdited
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Edit Issue OR Add History Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> ResolveIssue(IssueCreateDTO issue)
+        {
+            try
+            {
+                var issueEdited = await _issueRepository.EditIssue(issue, ((int)Commons.StatusIssue.Resolve));
+                if (issue.AttachFile != null)
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
+                if (issueEdited != null && historyCreated != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Edit Issue and Add history success!",
+                        data = issueEdited
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Edit Issue OR Add History Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
         }
 
         // Edit issue
@@ -28,22 +250,28 @@ namespace be.Services.IssueService
         {
             try
             {
-                var issueEdited = await _issueRepository.EditIssue(issue);
-                if (issueEdited == null)
+                var statusIssueId = (await _issueRepository.GetByIdAsync(issue.IssueId.Value)).StatusIssueId;
+                var issueEdited = await _issueRepository.EditIssue(issue, statusIssueId.Value);
+                if (issue.AttachFile != null)
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
+                if (issueEdited != null && historyCreated != null)
                 {
                     return new ResponseDTO
                     {
-                        code = 500,
-                        message = "Edit Issue Failed!"
+                        code = 200,
+                        message = "Edit Issue and Add history success!",
+                        data = issueEdited
                     };
                 }
                 else
                 {
                     return new ResponseDTO
                     {
-                        code = 200,
-                        message = "Edit Issue Success!",
-                        data = issueEdited
+                        code = 500,
+                        message = "Edit Issue OR Add History Failed!"
                     };
                 }
             }
@@ -95,27 +323,30 @@ namespace be.Services.IssueService
         {
             try
             {
-                var result = await _issueRepository.CreateIssue(issue);
+                var issueCreated = await _issueRepository.CreateIssue(issue);
                 if(issue.AttachFile != null)
                 {
-                    await _issueRepository.AddFile(issue.AttachFile, result);
-                }    
-                if (result == null)
+                    await _issueRepository.AddFile(issue.AttachFile, issueCreated);
+                }
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueCreated, issue.UserId.Value);
+                if (issueCreated != null && historyCreated != null)
+                {
+                    User assignee = _userService.GetUserById(issue.AssigneeId.Value);
+                    EmailService.Instance.SendMailCreate(issueCreated, assignee);
+                    //HuyNG5 - auto add reporter to watcher
+                    _watcherService.StartWatcherIssue(issueCreated.ReporterId, issueCreated.IssueId);
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Create Issue Success!"
+                    };
+                }
+                else
                 {
                     return new ResponseDTO
                     {
                         code = 500,
                         message = "Create Issue Failed!"
-                    };
-                }
-                else
-                {
-                    User assignee = _userService.GetUserById(issue.AssigneeId.Value); 
-                    EmailService.Instance.SendMailCreate(result, assignee); 
-                    return new ResponseDTO
-                    {
-                        code = 200,
-                        message = "Create Issue Success!"
                     };
                 }
             }
@@ -182,5 +413,6 @@ namespace be.Services.IssueService
         {
             return _issueRepository.GetAllIssueByUserId(userId);
         }
+
     }
 }

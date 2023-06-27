@@ -85,5 +85,23 @@ namespace be.Services.UserService
         {
             return await _userRepository.GetInfo(token);
         }
+
+        // PhuNV17
+        public void AddUserByExcel(User user)
+        {
+            _userRepository.AddUserByExcel(user); 
+        }
+
+        public IList<User> GetAllAccount(string account)
+        {
+            return _userRepository.GetAllAccount(account);
+        }
+
+        #region HuyNG5 - code bổ sung
+        public object ChangePassword(int userId, string password)
+        {
+            return _userRepository.ChangePassword(userId, password);
+        }
+        #endregion
     }
 }
