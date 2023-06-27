@@ -11,11 +11,11 @@ namespace be.Commons
     public enum StatusIssue
     {
         Open = 1,
-        Resolve = 2,
-        Cancelled = 3,
-        InProgress = 4,
-        Closed = 5,
-        Reopened = 6
+        InProgress = 2,
+        Resolve = 3,
+        Cancelled = 4,
+        Reopened  = 5,
+        Closed = 6
     }
 
     /// <summary>

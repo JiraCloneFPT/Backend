@@ -9,6 +9,15 @@ namespace be.Services.IssueService
     /// </summary>
     public interface IIssueService
     {
+        Task<ResponseDTO> RemoveFile(int fileId);
+        Task<ResponseDTO> AddFile(FileDTO fileDTO);
+
+        Task<ResponseDTO> GetFilesIssue(int issueId);
+        Task<ResponseDTO> CancelIssue(IssueCreateDTO issue);
+        Task<ResponseDTO> CloseIssue(IssueCreateDTO issue);
+
+        Task<ResponseDTO> ResolveIssue(IssueCreateDTO issue);
+
         // Edit issue
         Task<ResponseDTO> EditIssue(IssueCreateDTO issue);
 

@@ -6,6 +6,7 @@ using be.Services.IssueService;
 using be.Services.OtherService;
 using be.Services.UserService;
 using be.Services.WatcherService;
+using DocumentFormat.OpenXml.Bibliography;
 using MailKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,111 @@ namespace be.Controllers
             _userService = new UserService();
             _watcherService = new WatcherService();
 
+        }
+        // remove File Issue
+        [HttpDelete("removeFile")]
+        public async Task<ActionResult> RemoveFile(int fileId)
+        {
+            try
+            {
+                var resData = await _issueService.RemoveFile(fileId);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // cancel Issue
+        [HttpPost("addFile")]
+        public async Task<ActionResult> AddFile([FromForm] FileDTO fileDTO)
+        {
+            try
+            {
+                if (fileDTO == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.AddFile(fileDTO);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // cancel Issue
+        [HttpGet("getFilesIssue")]
+        public async Task<ActionResult> GetFilesIssue(int issueId)
+        {
+            try
+            {
+                var resData = await _issueService.GetFilesIssue(issueId);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // cancel Issue
+        [HttpPut("cancel")]
+        public async Task<ActionResult> CancelIssue([FromForm] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.CancelIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // close Issue
+        [HttpPut("close")]
+        public async Task<ActionResult> CloseIssue([FromForm] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.CloseIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // resolve Issue
+        [HttpPut("resolve")]
+        public async Task<ActionResult> ResloveIssue([FromForm] IssueCreateDTO issue)
+        {
+            try
+            {
+                if (issue == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.ResolveIssue(issue);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         // Edit Issue
