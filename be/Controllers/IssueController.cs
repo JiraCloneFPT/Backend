@@ -39,6 +39,71 @@ namespace be.Controllers
             _watcherService = new WatcherService();
 
         }
+
+        // Get Comments
+        [HttpGet("getComments")]
+        public async Task<IActionResult> GetComments(int issueId)
+        {
+            try
+            {
+                var resData = await _issueService.GetComments(issueId);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // Add comment 
+        [HttpPost("addComment")]
+        public async Task<ActionResult> AddComment(CommentDTO comment)
+        {
+            try
+            {
+                if (comment == null)
+                {
+                    return BadRequest();
+                }
+                var resData = await _issueService.AddComment(comment);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // InProgress Issue
+        [HttpPut("reopened")]
+        public async Task<ActionResult> ReopenedIssue(int userId, int issueId)
+        {
+            try
+            {
+                var resData = await _issueService.ReopenedIssue(userId, issueId);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // InProgress Issue
+        [HttpPut("inProgress")]
+        public async Task<ActionResult> InProgressIssue(int userId, int issueId)
+        {
+            try
+            {
+                var resData = await _issueService.InProgessIssue(userId, issueId);
+                return Ok(resData);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         // remove File Issue
         [HttpDelete("removeFile")]
         public async Task<ActionResult> RemoveFile(int fileId)

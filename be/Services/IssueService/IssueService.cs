@@ -1,4 +1,5 @@
-﻿using be.DTOs;
+﻿using be.Commons;
+using be.DTOs;
 using be.Models;
 using be.Repositories.IssueRepository;
 using be.Services.OtherService;
@@ -28,6 +29,137 @@ namespace be.Services.IssueService
             _watcherService = watcherService;
         }
 
+
+        public async Task<ResponseDTO> GetComments(int issueId)
+        {
+            try
+            {
+                var result = _issueRepository.GetComments(issueId);
+                if (result != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Get Comments Success!",
+                        data = result
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Get Comments Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<ResponseDTO> AddComment(CommentDTO comment)
+        {
+            try
+            {
+                var isCommented = await _issueRepository.AddComment(comment);
+                if (isCommented)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "AddComment Success!",
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "AddComment Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> ReopenedIssue(int userId, int issueId)
+        {
+            try
+            {
+                var isChange = _issueRepository.ChangeStatus(userId, issueId, ((int)Commons.StatusIssue.Reopened));
+                var issueEdited = await _issueRepository.GetByIdAsync(issueId);
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, userId);
+                if (issueEdited != null && historyCreated != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Change status Issue and Add history success!",
+                        data = issueEdited
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Change status OR Add History Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> InProgessIssue(int userId, int issueId)
+        {
+            try
+            {
+                var isChange =  _issueRepository.ChangeStatus(userId, issueId, ((int)Commons.StatusIssue.InProgress)) ;
+                var issueEdited = await _issueRepository.GetByIdAsync(issueId);
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, userId);
+                if (issueEdited != null && historyCreated != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Change status Issue and Add history success!",
+                        data = issueEdited
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Change status OR Add History Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
 
         public async Task<ResponseDTO> RemoveFile(int fileId)
         {

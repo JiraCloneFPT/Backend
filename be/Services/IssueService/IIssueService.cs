@@ -9,6 +9,11 @@ namespace be.Services.IssueService
     /// </summary>
     public interface IIssueService
     {
+        Task<ResponseDTO> GetComments(int issueId);
+        Task<ResponseDTO> AddComment(CommentDTO comment);
+        Task<ResponseDTO> ReopenedIssue(int userId, int issueId);
+        Task<ResponseDTO> InProgessIssue(int userId, int issueId);
+
         Task<ResponseDTO> RemoveFile(int fileId);
         Task<ResponseDTO> AddFile(FileDTO fileDTO);
 
