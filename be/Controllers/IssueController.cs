@@ -247,7 +247,10 @@ namespace be.Controllers
                     return BadRequest();
                 }
                 _watcherService.StartWatcherIssue(userId, issueId);
-                return Ok(_watcherService.CountWatcher(issueId));
+                return Ok(new {
+                    message = "Start successfully",
+                    status = 200,
+                });
             }
             catch (Exception ex)
             {
@@ -271,7 +274,11 @@ namespace be.Controllers
                     return BadRequest();
                 }
                 _watcherService.StopWatcherIssue(userId, issueId);
-                return Ok(_watcherService.CountWatcher(issueId));
+                return Ok(new
+                {
+                    message = "Stop successfully",
+                    status = 200,
+                });
             }
             catch (Exception ex)
             {
@@ -292,11 +299,11 @@ namespace be.Controllers
         }
 
         [HttpGet("checkWatcher")]
-        public async Task<ActionResult> CheckWatcher (int userId, int issueId)
+        public async Task<ActionResult> CheckWatcher (int issueId, int userId)
         {
             try
             {
-                return Ok(_watcherService.CheckWatcher(userId, issueId));
+                return Ok(_watcherService.CheckWatcher(issueId, userId));
             }
             catch (Exception ex)
             {
