@@ -107,8 +107,14 @@ namespace be.Services.IssueService
                 var isChange = _issueRepository.ChangeStatus(userId, issueId, ((int)Commons.StatusIssue.Reopened));
                 var issueEdited = await _issueRepository.GetByIdAsync(issueId);
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, userId);
+                // get issueID 
+                int issueID = issueId;
+                // get Watcher list
+                List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
                 if (issueEdited != null && historyCreated != null)
                 {
+                    HistoryForEmail historyForEmail = _historyService.GetHistoryForEmail(issueID);
+                    EmailService.Instance.SendMailUpdate(listEmailWatchers, historyForEmail);
                     return new ResponseDTO
                     {
                         code = 200,
@@ -142,8 +148,15 @@ namespace be.Services.IssueService
                 var isChange =  _issueRepository.ChangeStatus(userId, issueId, ((int)Commons.StatusIssue.InProgress)) ;
                 var issueEdited = await _issueRepository.GetByIdAsync(issueId);
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, userId);
+                // get issueID 
+                int issueID = issueId;
+
+                // get Watcher list
+                List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
                 if (issueEdited != null && historyCreated != null)
                 {
+                    HistoryForEmail historyForEmail = _historyService.GetHistoryForEmail(issueID);
+                    EmailService.Instance.SendMailUpdate(listEmailWatchers, historyForEmail);
                     return new ResponseDTO
                     {
                         code = 200,
@@ -276,6 +289,11 @@ namespace be.Services.IssueService
             try
             {
                 var issueEdited = await _issueRepository.EditIssue(issue, ((int)Commons.StatusIssue.Cancelled));
+                // get issueID 
+                int issueID = issue.IssueId.Value;
+
+                // get Watcher list
+                List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
@@ -291,6 +309,8 @@ namespace be.Services.IssueService
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
                 {
+                    HistoryForEmail historyForEmail = _historyService.GetHistoryForEmail(issueID);
+                    EmailService.Instance.SendMailUpdate(listEmailWatchers, historyForEmail);
                     return new ResponseDTO
                     {
                         code = 200,
@@ -323,10 +343,16 @@ namespace be.Services.IssueService
             try
             {
                 var issueEdited = await _issueRepository.EditIssue(issue, ((int)Commons.StatusIssue.Closed));
+                // get issueID 
+                int issueID = issue.IssueId.Value;
+
+                // get Watcher list
+                List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
                 }
+
                 if (issue.Comment != null)
                 {
                     CommentDTO comment = new CommentDTO();
@@ -338,6 +364,8 @@ namespace be.Services.IssueService
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
                 {
+                    HistoryForEmail historyForEmail = _historyService.GetHistoryForEmail(issueID);
+                    EmailService.Instance.SendMailUpdate(listEmailWatchers, historyForEmail);
                     return new ResponseDTO
                     {
                         code = 200,
@@ -369,6 +397,11 @@ namespace be.Services.IssueService
             try
             {
                 var issueEdited = await _issueRepository.EditIssue(issue, ((int)Commons.StatusIssue.Resolve));
+                // get issueID 
+                int issueID = issue.IssueId.Value;
+
+                // get Watcher list
+                List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
@@ -384,6 +417,8 @@ namespace be.Services.IssueService
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
                 {
+                    HistoryForEmail historyForEmail = _historyService.GetHistoryForEmail(issueID);
+                    EmailService.Instance.SendMailUpdate(listEmailWatchers, historyForEmail);
                     return new ResponseDTO
                     {
                         code = 200,
