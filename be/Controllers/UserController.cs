@@ -93,7 +93,7 @@ namespace be.Controllers
         }
 
         [HttpPost("AddUser")]
-        public async Task<ActionResult> AddUser(AddUser adduser)
+        public async Task<ActionResult> AddUser([FromBody]AddUser adduser)
         {
             try
             {

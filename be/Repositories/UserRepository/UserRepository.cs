@@ -62,8 +62,8 @@ namespace be.Repositories.UserRepository
         }
         public IList<User> GetAllUser()
         {
-            //return _context.Users.Where(user => user.RoleId == 1).ToList();
             return _context.Users.ToList();
+            //return _context.Users.W;
         }
 
         //public void AddUser(User user)
