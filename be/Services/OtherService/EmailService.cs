@@ -7,6 +7,9 @@ using be.Helpers;
 using be.Models;
 using be.DTOs;
 using be.Services.UserService;
+using be.Services.HistoryService;
+using be.Services.WatcherService;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace be.Services.OtherService
 {
@@ -14,10 +17,7 @@ namespace be.Services.OtherService
     {
         private static EmailService instance;
 
-  
-
-       
-
+     
         public static EmailService Instance
         {
             get { if (instance == null) instance = new EmailService(); return EmailService.instance; }
@@ -63,7 +63,7 @@ namespace be.Services.OtherService
             }
 
         }
-        public async Task<bool> SendMailCreate(Issue issue, User assignee )
+        public async Task<bool> SendMailCreate(Models.Issue issue, User assignee )
         {
 
 
@@ -71,7 +71,7 @@ namespace be.Services.OtherService
             {
                 
                 string _text = "";
-                    _text = EmailHelper.Instance.BodyUpdateEmail(issue);
+                    _text = EmailHelper.Instance.BodyEmailCreateIssue(issue);
                 
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse("jira.service.fpt@gmail.com"));
@@ -93,6 +93,60 @@ namespace be.Services.OtherService
                 return false;
             }
         }
-        
+        public async Task<bool> SendMailUpdate(List<string> listwatcher, HistoryForEmail historyForEmail)
+        {
+
+            try
+            {
+                List<string> finalListEmail = new List<string>();
+
+                finalListEmail.Add(historyForEmail.ReporterEmail);
+                finalListEmail.Add(historyForEmail.AssigneeEmail);
+
+                for (int i = 0; i < listwatcher.Count; i++)
+                {
+                    if (listwatcher[i] != historyForEmail.ReporterEmail && listwatcher[i] != historyForEmail.AssigneeEmail)
+                    {
+                        finalListEmail.Add(listwatcher[i]); 
+                    }
+                }
+
+                string bodyUpdate = "";
+
+                for (int i = 0; i < historyForEmail.Properties.Count; i++)
+                {
+                    bodyUpdate += "<tr>\r\n          <td>" + historyForEmail.Properties[i].Property + "</td>\r\n          <td><s>"+ historyForEmail.Properties[i].Orginal + "</s> "+ historyForEmail.Properties[i].New +" </td>\r\n        </tr>";
+                }
+
+                string _text = "";
+                _text = EmailHelper.Instance.BodyEmailUpdateIssue(historyForEmail, bodyUpdate);
+
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse("jira.service.fpt@gmail.com"));
+                for (int i = 0; i < finalListEmail.Count; i++)
+                {
+
+                    email.To.Add(MailboxAddress.Parse(finalListEmail[i]));
+
+                }
+                //email.Subject = "[FI2.0 JIRA3] Updates for FSOFTACADEMY-" + issue.IssueId + ": " + issue.Summary + "";
+                email.Subject = "[FI2.0 JIRA3] Updates for "+ historyForEmail.ProjectShortName + "/" + historyForEmail.IssueId + " "  ;
+
+                email.Body = new TextPart(TextFormat.Html)
+                {
+                    Text = _text
+                };
+                var smtp = new SmtpClient();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, false);
+                await smtp.AuthenticateAsync("jira.service.fpt@gmail.com", "hcjizzxjmyobukzt");
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

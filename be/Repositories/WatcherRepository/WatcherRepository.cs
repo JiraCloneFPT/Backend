@@ -49,5 +49,13 @@ namespace be.Repositories.WatcherRepository
             _context.SaveChanges();
         }
         #endregion
+
+        #region PhuNV17 
+        public List<int> getListWatcher(int issueId)
+        {
+            return _context.Watchers.Where(x => x.IssueId == issueId).Select(x =>x.UserId).ToList();
+        }
+
+        #endregion
     }
 }

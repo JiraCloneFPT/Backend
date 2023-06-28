@@ -1,6 +1,9 @@
 ﻿using be.DTOs;
+using be.Helpers;
 using be.Models;
+using be.Repositories.HistoryRepository;
 using be.Repositories.IssueRepository;
+using be.Services.HistoryService;
 using be.Services.OtherService;
 using be.Services.UserService;
 using be.Services.WatcherService;
@@ -18,12 +21,18 @@ namespace be.Services.IssueService
 
         private readonly IWatcherService _watcherService;
 
-        public IssueService(IIssueRepository issueRepository, IUserService userService, IWatcherService watcherService)
+        private readonly  IHistoryService _historyService;
+       
+
+
+
+        public IssueService(IIssueRepository issueRepository, IUserService userService, IWatcherService watcherService, IHistoryService historyService)
         {
             _issueRepository = issueRepository;
 
             _userService = userService;
             _watcherService = watcherService;
+            _historyService = historyService;
         }
 
         // Edit issue
@@ -32,13 +41,25 @@ namespace be.Services.IssueService
             try
             {
                 var issueEdited = await _issueRepository.EditIssue(issue);
-                if (issue.AttachFile != null)
+
+                // lấy issueID 
+                int issueID = issue.IssueId.Value;
+
+                // lấy danh sách Watcher
+                List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
+                                if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
                 }
+               
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
+
+               
+
                 if (issueEdited != null && historyCreated != null)
                 {
+                    HistoryForEmail historyForEmail = _historyService.GetHistoryForEmail(issueID);
+                    EmailService.Instance.SendMailUpdate(listEmailWatchers, historyForEmail);
                     return new ResponseDTO
                     {
                         code = 200,

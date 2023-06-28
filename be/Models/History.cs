@@ -105,5 +105,5 @@ public partial class History
 
     public string? Resolution { get; set; }
 
-    public DateTime CreateTime { get; set; }
+    public DateTime UpdateTime { get; set; }
 }

@@ -18,7 +18,7 @@ namespace be.Helpers
             issue.PriorityName = _context.Priorities.Where(x => x.PriorityId == issue.PriorityId).Select(x => x.PriorityName).FirstOrDefault();
             issue.AssigneeName = _context.Users.Where(x => x.UserId == issue.AssigneeId).Select(x => x.FullName).FirstOrDefault();
             issue.ReporterName = _context.Users.Where(x => x.UserId == issue.ReporterId).Select(x => x.FullName).FirstOrDefault();
-            issue.QcactivityName = _context.Users.Where(x => x.UserId == issue.QcactivityId).Select(x => x.FullName).FirstOrDefault();
+            issue.QcactivityName = _context.Qcactivities.Where(x => x.QcactivityId == issue.QcactivityId).Select(x => x.QcactivityName).FirstOrDefault();
             issue.ComponentName = _context.Components.Where(x => x.ComponentId == issue.ComponentId).Select(x => x.ComponentName).FirstOrDefault();
             issue.ProductName = _context.Products.Where(x => x.ProductId == issue.ProductId).Select(x => x.ProductName).FirstOrDefault();
             issue.DefectOriginName = _context.DefectOrigins.Where(x => x.DefectOriginId == issue.DefectOriginId).Select(x => x.DefectOriginName).FirstOrDefault();
@@ -40,7 +40,7 @@ namespace be.Helpers
             history.Priority = _context.Priorities.Where(x => x.PriorityId == history.PriorityId).Select(x => x.PriorityName).FirstOrDefault();
             history.Assignee = _context.Users.Where(x => x.UserId == history.AssigneeId).Select(x => x.FullName).FirstOrDefault();
             history.Reporter = _context.Users.Where(x => x.UserId == history.ReporterId).Select(x => x.FullName).FirstOrDefault();
-            history.QCActivity = _context.Users.Where(x => x.UserId == history.QcactivityId).Select(x => x.FullName).FirstOrDefault();
+            history.QCActivity = _context.Qcactivities.Where(x => x.QcactivityId == history.QcactivityId).Select(x => x.QcactivityName).FirstOrDefault();
             history.Component = _context.Components.Where(x => x.ComponentId == history.ComponentId).Select(x => x.ComponentName).FirstOrDefault();
             history.Product = _context.Products.Where(x => x.ProductId == history.ProductId).Select(x => x.ProductName).FirstOrDefault();
             history.DefectOrigin = _context.DefectOrigins.Where(x => x.DefectOriginId == history.DefectOriginId).Select(x => x.DefectOriginName).FirstOrDefault();
@@ -53,5 +53,6 @@ namespace be.Helpers
 
             return history;
         }
+       
     }
 }

@@ -10,5 +10,8 @@
 
         public bool CheckWatcher(int? userId, int? issueId);
         #endregion
+
+        public List<int> getListWatcher(int issueId);
+
     }
 }
