@@ -261,50 +261,49 @@ namespace be.Repositories.IssueRepository
                 var issueEdit = context.Issues.Where(e => e.IssueId == issue.IssueId).FirstOrDefault();
                 if (issueEdit != null)
                 {
-                    issueEdit.Summary = issue?.Summary;
-                    issueEdit.ComponentId = issue.ComponentId;
-                    issueEdit.ProductId = issue.ProductId;
-                    issueEdit.Description = issue.Description;
-                    issueEdit.DescriptionTranslate = issue.DescriptionTranslate;
-                    issueEdit.DefectOriginId = issue.DefectOriginId;
-                    issueEdit.PriorityId = issue.PriorityId;
-                    issueEdit.Severity = issue.Severity;
-                    issueEdit.QcactivityId = issue.QcactivityId;
-                    issueEdit.CauseAnalysis = issue.CauseAnalysis;
-                    issueEdit.CauseAnalysisTranslate = issue.CauseAnalysisTranslate;
-                    issueEdit.CorrectAction = issue.CorrectAction;
-                    issueEdit.CorrectActionTranslate = issue.CorrectActionTranslate;
-                    issueEdit.TechnicalCauseId = issue.TechnicalCauseId;
-                    issueEdit.Environment = issue.Environment;
-                    issueEdit.AssigneeId = issue.AssigneeId;
-                    issueEdit.RoleIssueId = issue.RoleIssueId;
-                    issueEdit.ReporterId = issue.ReporterId;
-                    issueEdit.PlannedStart = issue.PlannedStart;
-                    issueEdit.OriginalEstimate = issue.OriginalEstimate;
-                    issueEdit.RemaningEstimate = issue.RemainingEstimate;
-                    issueEdit.EstimateEffort = issue.EstimateEffort;
-                    issueEdit.Complexity = issue.Complexity;
-                    issueEdit.AdjustedVp = issue.AdjustedVp;
-                    issueEdit.DueDate = issue.DueDate;
-                    issueEdit.Labels = issue.Labels;
-                    issueEdit.Sprint = issue.Sprint;
-                    issueEdit.FunctionId = issue.FunctionId;
-                    issueEdit.TestcaseId = issue.TestcaseId;
-                    issueEdit.FunctionCategory = issue.FunctionCategory;
-                    //issueEdit.LinkedIssueId  // field not have in db 
-                    issueEdit.Issue1 = issue.Issue1;  // mockIssueId
-                    issueEdit.EpicLink = issue.EpicLink;
-                    issueEdit.ClosedDate = issue.ClosedDate;
-                    issueEdit.SecurityLevel = issue.SecurityLevel;
-                    issueEdit.DefectTypeId = issue.DefectTypeId;
-                    issueEdit.CauseCategoryId = issue.CauseCategoryId;
-                    issueEdit.LeakCauseId = issue.LeakCauseId;
-                    issueEdit.DueTime = issue.DueTime;
-                    issueEdit.Units = issue.Units;
-                    issueEdit.PercentDone = issue.PercentDone;
-                    issueEdit.Resolution = issue.Resolution; // 
-                    issueEdit.StatusIssueId = statusIssueId;
-                    //comment
+                    issueEdit.Summary = issue.Summary != null ? issue.Summary : issueEdit.Summary;
+                    issueEdit.ComponentId = issue.ComponentId != null ? issue.ComponentId : issueEdit.ComponentId;
+                    issueEdit.ProductId = issue.ProductId != null ? issue.ProductId : issueEdit.ProductId;
+                    issueEdit.Description = issue.Description != null ? issue.Description : issueEdit.Description;
+                    issueEdit.DescriptionTranslate = issue.DescriptionTranslate != null ? issue.DescriptionTranslate : issueEdit.DescriptionTranslate;
+                    issueEdit.DefectOriginId = issue.DefectOriginId != null ? issue.DefectOriginId : issueEdit.DefectOriginId;
+                    issueEdit.PriorityId = issue.PriorityId != null ? issue.PriorityId : issueEdit.PriorityId;
+                    issueEdit.Severity = issue.Severity != null ? issue.Severity : issueEdit.Severity;
+                    issueEdit.QcactivityId = issue.QcactivityId != null ? issue.QcactivityId : issueEdit.QcactivityId;
+                    issueEdit.CauseAnalysis = issue.CauseAnalysis != null ? issue.CauseAnalysis : issueEdit.CauseAnalysis;
+                    issueEdit.CauseAnalysisTranslate = issue.CauseAnalysisTranslate != null ? issue.CauseAnalysisTranslate : issueEdit.CauseAnalysisTranslate;
+                    issueEdit.CorrectAction = issue.CorrectAction != null ? issue.CorrectAction : issueEdit.CorrectAction;
+                    issueEdit.CorrectActionTranslate = issue.CorrectActionTranslate != null ? issue.CorrectActionTranslate : issueEdit.CorrectActionTranslate;
+                    issueEdit.TechnicalCauseId = issue.TechnicalCauseId != null ? issue.TechnicalCauseId : issueEdit.TechnicalCauseId;
+                    issueEdit.Environment = issue.Environment != null ? issue.Environment : issueEdit.Environment;
+                    issueEdit.AssigneeId = issue.AssigneeId != null ? issue.AssigneeId : issueEdit.AssigneeId;
+                    issueEdit.RoleIssueId = issue.RoleIssueId != null ? issue.RoleIssueId : issueEdit.RoleIssueId;
+                    issueEdit.ReporterId = issue.ReporterId != null ? issue.ReporterId : issueEdit.ReporterId;
+                    issueEdit.PlannedStart = issue.PlannedStart != null ? issue.PlannedStart : issueEdit.PlannedStart;
+                    issueEdit.OriginalEstimate = issue.OriginalEstimate != null ? issue.OriginalEstimate : issueEdit.OriginalEstimate;
+                    issueEdit.RemaningEstimate = issue.RemainingEstimate != null ? issue.RemainingEstimate : issueEdit.RemaningEstimate;
+                    issueEdit.EstimateEffort = issue.EstimateEffort != null ? issue.EstimateEffort : issueEdit.EstimateEffort;
+                    issueEdit.Complexity = issue.Complexity != null ? issue.Complexity : issueEdit.Complexity;
+                    issueEdit.AdjustedVp = issue.AdjustedVp != null ? issue.AdjustedVp : issueEdit.AdjustedVp;
+                    issueEdit.DueDate = issue.DueDate != null ? issue.DueDate : issueEdit.DueDate;
+                    issueEdit.Labels = issue.Labels != null ? issue.Labels : issueEdit.Labels;
+                    issueEdit.Sprint = issue.Sprint != null ? issue.Sprint : issueEdit.Sprint;
+                    issueEdit.FunctionId = issue.FunctionId != null ? issue.FunctionId : issueEdit.FunctionId  ;
+                    issueEdit.TestcaseId = issue.TestcaseId != null ? issue.TestcaseId : issueEdit.TestcaseId  ;
+                    issueEdit.FunctionCategory = issue.FunctionCategory != null ? issue.FunctionCategory : issueEdit.FunctionCategory  ;
+                    //issueEdit.LinkedIssueId  // field not have in db != null ? issue. : issueEdit.   
+                    issueEdit.Issue1 = issue.Issue1 != null ? issue.Issue1 : issueEdit.Issue1; 
+                    issueEdit.EpicLink = issue.EpicLink != null ? issue.EpicLink : issueEdit.EpicLink;
+                    issueEdit.ClosedDate = issue.ClosedDate != null ? issue.ClosedDate : issueEdit.ClosedDate  ;
+                    issueEdit.SecurityLevel = issue.SecurityLevel != null ? issue.SecurityLevel : issueEdit.SecurityLevel  ;
+                    issueEdit.DefectTypeId = issue.DefectTypeId != null ? issue.DefectTypeId : issueEdit.DefectTypeId  ;
+                    issueEdit.CauseCategoryId = issue.CauseCategoryId != null ? issue.CauseCategoryId : issueEdit.CauseCategoryId  ;
+                    issueEdit.LeakCauseId = issue.LeakCauseId != null ? issue.LeakCauseId : issueEdit.LeakCauseId  ;
+                    issueEdit.DueTime = issue.DueTime != null ? issue.DueTime : issueEdit.DueTime  ;
+                    issueEdit.Units = issue.Units != null ? issue.Units : issueEdit.Units  ;
+                    issueEdit.PercentDone = issue.PercentDone != null ? issue.PercentDone : issueEdit.PercentDone  ;
+                    issueEdit.Resolution = issue.Resolution; // != null ? issue.Resolution : issueEdit.Resolution   
+                    issueEdit.StatusIssueId = statusIssueId ;
 
                     context.Issues.Update(issueEdit);
                     var updated = await context.SaveChangesAsync();
