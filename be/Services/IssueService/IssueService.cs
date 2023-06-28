@@ -262,21 +262,17 @@ namespace be.Services.IssueService
                 var statusIssueId = (await _issueRepository.GetByIdAsync(issue.IssueId.Value)).StatusIssueId;
                 var issueEdited = await _issueRepository.EditIssue(issue, statusIssueId.Value);
                 if (issue.AttachFile != null)
-               
+                {
+                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
 
                 // lấy issueID 
                 int issueID = issue.IssueId.Value;
 
                 // lấy danh sách Watcher
                 List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
-                                if (issue.AttachFile != null)
-                {
-                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
-                }
-               
+                           
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
-
-               
 
                 if (issueEdited != null && historyCreated != null)
                 {

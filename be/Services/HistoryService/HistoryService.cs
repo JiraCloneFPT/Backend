@@ -1,4 +1,5 @@
-﻿using be.Models;
+﻿using be.Controllers;
+using be.Models;
 using be.Repositories.HistoryRepository;
 
 namespace be.Services.HistoryService
@@ -16,14 +17,20 @@ namespace be.Services.HistoryService
             return _historyRepository.GetHistory(id);
         }
 
-        public List<int> GetTwoMaxHistoryIds(int issueId)
-        {
-            return _historyRepository.GetTwoMaxHistoryIds(issueId);
-        }
 
         public HistoryForEmail GetHistoryForEmail(int issueId)
         {
             return _historyRepository.GetHistoryForEmail(issueId);
+        }
+
+        public async Task<object> GetElementFirst(int idIssue)
+        {
+            return await _historyRepository.GetElementFirst(idIssue);
+        }
+
+        public async Task<List<ObjectHistory>> HandleCompareObject(int idIssue)
+        {
+            return await _historyRepository.HandleCompareObject(idIssue);
         }
 
     }

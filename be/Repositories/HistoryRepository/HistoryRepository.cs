@@ -13,7 +13,7 @@ namespace be.Repositories.HistoryRepository
         private readonly DbJiraCloneContext _context;
         private readonly HandleData handleData;
         private readonly Mapper mapper;
-        private readonly HandleData handleData;
+      
 
         public HistoryRepository(DbJiraCloneContext jiraCloneContext)
         {
@@ -64,6 +64,22 @@ namespace be.Repositories.HistoryRepository
                 result.AssigneeEmail = _context.Users.FirstOrDefault(x => x.UserId == history[0].AssigneeId).Email;
             }
             return result;
+        }
+        public async Task<object> GetElementFirst(int idIssue)
+        {
+            var history = await _context.Histories.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.UpdateTime).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
+            if (history.Count == 0)
+            {
+                return new
+                {
+                    status = 400,
+                };
+            }
+            return new
+            {
+                status = 200,
+                data = history[history.Count - 1]
+            };
         }
 
 
