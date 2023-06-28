@@ -37,6 +37,18 @@ namespace be.Repositories.HistoryRepository
                     result.Add(data);
                 }
             }
+            var comments = await _context.Comments.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.CreatedAt).ToListAsync();
+            if(comments.Count > 0)
+            {
+                foreach(var comment in comments)
+                {
+                    var data = new ObjectHistory();
+                    data.EditorName = await _context.Users.Where(x => x.UserId == comment.UserId).Select(x => x.FullName).FirstOrDefaultAsync();
+                    data.CreateAt = (DateTime)comment.CreatedAt;
+                    result.Add(data);
+                }
+            }
+            result.Sort((a,b) => b.CreateAt.CompareTo(a.CreateAt));
 
             return result;
         }
