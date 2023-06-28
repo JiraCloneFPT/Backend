@@ -10,9 +10,11 @@ namespace be.Repositories.IssueRepository
     /// </summary>
     public interface IIssueRepository : IBaseRepository<Issue>
     {
-        Task<bool> ChangeStatus(int issueId, int statusIssueId);
+        Task<bool> ChangeStatus(int userId, int issueId, int statusIssueId);
 
-        Task<bool> AddComment(int issueId, int userId, string comment);
+        Task<List<CommentDTO>> GetComments(int issueId);
+
+        Task<bool> AddComment(CommentDTO comment);
 
         Task<bool> RemoveFile(int fileId);
 

@@ -29,12 +29,37 @@ namespace be.Repositories.IssueRepository
             handleData = new HandleData();
         }
 
-        public async Task<bool> ChangeStatus(int issueId, int statusIssueId)
+
+        public async Task<List<CommentDTO>> GetComments(int issueId)
+        {
+            try
+            {
+                var result = (from c in context.Comments
+                              join u in context.Users on c.UserId equals u.UserId
+                              join i in context.Issues on c.IssueId equals i.IssueId
+                              where c.IssueId == issueId
+                              select new CommentDTO
+                              {
+                                  IssueId = c.IssueId,
+                                  UserId = c.UserId,
+                                  CommentContent = c.CommentContent,
+                                  CreateAt = c.CreatedAt,
+                                  FullName = u.FullName
+                              }).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> ChangeStatus(int userId, int issueId, int statusIssueId)
         {
             try
             {
                 var issue = context.Issues.Where(e => e.IssueId.Equals(issueId)).FirstOrDefault();
-                if(issue == null)
+                if(issue != null)
                 {
                     issue.StatusIssueId = statusIssueId;
                     context.Issues.Update(issue);
@@ -49,19 +74,19 @@ namespace be.Repositories.IssueRepository
             }
         }
 
-        public async Task<bool> AddComment(int issueId, int userId, string comment)
+        public async Task<bool> AddComment(CommentDTO comment)
         {
             try
             {
                 Models.Comment newComment = new Models.Comment();
                 var dateTime = DateTime.Now;
-                newComment.UserId = userId;
-                newComment.IssueId = issueId;
-                newComment.CommentContent = comment;
+                newComment.UserId = comment.UserId;
+                newComment.IssueId = comment.IssueId;
+                newComment.CommentContent = comment.CommentContent;
                 newComment.CreatedAt = dateTime;
                 context.Comments.Add(newComment);
-                var numComment = context.SaveChanges();
-                return numComment > 0 ? true : false;
+                var numCommented = context.SaveChanges();
+                return numCommented > 0 ? true : false;
             }
             catch (Exception ex)
             {

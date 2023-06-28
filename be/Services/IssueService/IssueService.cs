@@ -1,4 +1,5 @@
-﻿using be.DTOs;
+﻿using be.Commons;
+using be.DTOs;
 using be.Helpers;
 using be.Models;
 using be.Repositories.HistoryRepository;
@@ -37,6 +38,137 @@ namespace be.Services.IssueService
             _historyService = historyService;
         }
 
+
+        public async Task<ResponseDTO> GetComments(int issueId)
+        {
+            try
+            {
+                var result = _issueRepository.GetComments(issueId);
+                if (result != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Get Comments Success!",
+                        data = result
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Get Comments Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<ResponseDTO> AddComment(CommentDTO comment)
+        {
+            try
+            {
+                var isCommented = await _issueRepository.AddComment(comment);
+                if (isCommented)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "AddComment Success!",
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "AddComment Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> ReopenedIssue(int userId, int issueId)
+        {
+            try
+            {
+                var isChange = _issueRepository.ChangeStatus(userId, issueId, ((int)Commons.StatusIssue.Reopened));
+                var issueEdited = await _issueRepository.GetByIdAsync(issueId);
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, userId);
+                if (issueEdited != null && historyCreated != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Change status Issue and Add history success!",
+                        data = issueEdited
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Change status OR Add History Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> InProgessIssue(int userId, int issueId)
+        {
+            try
+            {
+                var isChange =  _issueRepository.ChangeStatus(userId, issueId, ((int)Commons.StatusIssue.InProgress)) ;
+                var issueEdited = await _issueRepository.GetByIdAsync(issueId);
+                var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, userId);
+                if (issueEdited != null && historyCreated != null)
+                {
+                    return new ResponseDTO
+                    {
+                        code = 200,
+                        message = "Change status Issue and Add history success!",
+                        data = issueEdited
+                    };
+                }
+                else
+                {
+                    return new ResponseDTO
+                    {
+                        code = 500,
+                        message = "Change status OR Add History Failed!"
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    code = 500,
+                    message = ex.Message
+                };
+            }
+        }
 
         public async Task<ResponseDTO> RemoveFile(int fileId)
         {
@@ -148,13 +280,21 @@ namespace be.Services.IssueService
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
                 }
+                if (issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
+                }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
                 {
                     return new ResponseDTO
                     {
                         code = 200,
-                        message = "Edit Issue and Add history success!",
+                        message = "Cancel Issue and Add history success!",
                         data = issueEdited
                     };
                 }
@@ -163,7 +303,7 @@ namespace be.Services.IssueService
                     return new ResponseDTO
                     {
                         code = 500,
-                        message = "Edit Issue OR Add History Failed!"
+                        message = "Cancel Issue OR Add History Failed!"
                     };
                 }
             }
@@ -186,6 +326,14 @@ namespace be.Services.IssueService
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                if (issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
                 }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
@@ -224,6 +372,14 @@ namespace be.Services.IssueService
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                if (issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
                 }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
@@ -272,6 +428,14 @@ namespace be.Services.IssueService
                 // lấy danh sách Watcher
                 List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
                            
+                if(issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
+                }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
 
                 if (issueEdited != null && historyCreated != null)
