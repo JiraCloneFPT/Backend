@@ -11,6 +11,7 @@ using System.Security.Claims;
 using be.Services.OtherService;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace be.Repositories.UserRepository
 {
@@ -230,7 +231,8 @@ namespace be.Repositories.UserRepository
         public object Login(string accoount, string password, IConfiguration config)
         {
             string token = "";
-            var user = _context.Users.SingleOrDefault(x => x.AccountName.ToLower() == accoount.ToLower());
+            //var user = _context.Users.SingleOrDefault(x => x.AccountName.ToLower() == accoount.ToLower());
+            var user = _context.Users.Where(e=>e.AccountName.Equals(accoount)).FirstOrDefault();
             if (user == null)
             {
                 return new
@@ -345,13 +347,26 @@ namespace be.Repositories.UserRepository
             };
         }
 
-        // PhuNV17
-        public  IList<User> GetAllAccount(string account)
+        #region PhuNV17
+        public IList<User> GetAllAccount(string account)
         {
             IList<User> accounts = new List<User>();
             accounts = _context.Users.Where(user => user.AccountName == account).ToList();
             return accounts;
 
         }
+
+        public List<string> GetListEmailUsers(List<int> listId)
+        {
+           List<string> emailList = new List<string>();
+
+            for (int i = 0; i < listId.Count; i++)
+            {
+                string email = _context.Users.FirstOrDefault(x => x.UserId == listId[i]).Email;
+                emailList.Add(email);
+            }
+            return emailList;
+        }
+        #endregion
     }
 }

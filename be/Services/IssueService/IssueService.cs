@@ -1,7 +1,10 @@
 ﻿using be.Commons;
 using be.DTOs;
+using be.Helpers;
 using be.Models;
+using be.Repositories.HistoryRepository;
 using be.Repositories.IssueRepository;
+using be.Services.HistoryService;
 using be.Services.OtherService;
 using be.Services.UserService;
 using be.Services.WatcherService;
@@ -21,12 +24,18 @@ namespace be.Services.IssueService
 
         private readonly IWatcherService _watcherService;
 
-        public IssueService(IIssueRepository issueRepository, IUserService userService, IWatcherService watcherService)
+        private readonly  IHistoryService _historyService;
+       
+
+
+
+        public IssueService(IIssueRepository issueRepository, IUserService userService, IWatcherService watcherService, IHistoryService historyService)
         {
             _issueRepository = issueRepository;
 
             _userService = userService;
             _watcherService = watcherService;
+            _historyService = historyService;
         }
 
 
@@ -412,6 +421,13 @@ namespace be.Services.IssueService
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
                 }
+
+                // lấy issueID 
+                int issueID = issue.IssueId.Value;
+
+                // lấy danh sách Watcher
+                List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
+                           
                 if(issue.Comment != null)
                 {
                     CommentDTO comment = new CommentDTO();
@@ -421,8 +437,11 @@ namespace be.Services.IssueService
                     _issueRepository.AddComment(comment);
                 }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
+
                 if (issueEdited != null && historyCreated != null)
                 {
+                    HistoryForEmail historyForEmail = _historyService.GetHistoryForEmail(issueID);
+                    EmailService.Instance.SendMailUpdate(listEmailWatchers, historyForEmail);
                     return new ResponseDTO
                     {
                         code = 200,

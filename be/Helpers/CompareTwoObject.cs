@@ -28,8 +28,8 @@ namespace be.Helpers
                 {
                     Properties difference = new Properties();
                     difference.Property = CutString(property.Name);
-                    difference.Orginal = value1;
-                    difference.New = value2;
+                    difference.Orginal = value2;
+                    difference.New = value1;
                     differences.Add(difference);
                 }
             }

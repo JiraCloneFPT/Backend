@@ -2,7 +2,7 @@
 using be.DTOs;
 using be.Helpers;
 using be.Models;
-using be.Services.History;
+using be.Services.HistoryService;
 using be.Services.IssueService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +26,7 @@ namespace be.Controllers
         [HttpGet("all")]
         public async Task<ActionResult> HandleCompareObject(int idIssue)
         {
+
             try
             {
                 var result = await historyService.HandleCompareObject(idIssue);
@@ -56,6 +57,17 @@ namespace be.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("EmailHistory")]
+        public async Task<ActionResult> HandleCompareForEmail(int idIssue)
+        {
+            var result = historyService.GetHistoryForEmail(idIssue); 
+            return Ok(new
+            {
+                status = 200,
+                data = result
+            });  
+        }
     }
     public class ObjectHistory
     {
@@ -63,4 +75,5 @@ namespace be.Controllers
         public List<Properties> Properties { get; set; }
         public DateTime CreateAt { get; set; }
     }
+ 
 }

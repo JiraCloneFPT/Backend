@@ -10,5 +10,9 @@
 
         public bool CheckWatcher(int? issueId, int? userId);
         #endregion
+        #region PhuNV17
+        public List<int> getListWatcher(int issueId);
+
+        #endregion
     }
 }

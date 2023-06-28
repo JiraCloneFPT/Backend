@@ -20,8 +20,9 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json.Serialization;
 using be.Services.WatcherService;
 using be.Repositories.WatcherRepository;
+using be.Services.HistoryService;
 using be.Repositories.HistoryRepository;
-using be.Services.History;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,9 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 builder.Services.AddScoped<IWatcherService, WatcherService>();
 builder.Services.AddScoped<IWatcherRepository, WatcherRepository>();
+
+builder.Services.AddScoped<IHistoryService, HistoryService>();
+builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
 
 var app = builder.Build();
 

@@ -23,11 +23,12 @@ namespace be.Repositories.UserRepository
         User UpdateUser(User user);
         User GetUserInformation(int userId);
 
-        // PhuNV17
+        #region PhuNV17
         public void AddUserByExcel(User user);
         public IList<User> GetAllAccount(string account);
+        public List<string> GetListEmailUsers(List<int> listId);
 
-
+        #endregion
         Task<object> GetInfo(string token);
         #region HuyNG5 - code bổ sung
         public object ChangePassword(int userId, string newPasword);

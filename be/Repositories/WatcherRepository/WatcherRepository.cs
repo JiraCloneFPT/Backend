@@ -16,7 +16,9 @@ namespace be.Repositories.WatcherRepository
         {
             // true: chưa watcher
             // false: đã watcher
-            var check = _context.Watchers.SingleOrDefault(x => x.IssueId == issueId && x.UserId == userId);
+            //var check = _context.Watchers.SingleOrDefault(x => x.IssueId == issueId && x.UserId == userId);
+            var check = _context.Watchers.Where(x => x.IssueId == issueId && x.UserId == userId).FirstOrDefault();
+
             if (check == null)
             {
                 return true;
@@ -49,6 +51,14 @@ namespace be.Repositories.WatcherRepository
             _context.Watchers.Remove(deleteWatcher);
             _context.SaveChanges();
         }
+        #endregion
+
+        #region PhuNV17 
+        public List<int> getListWatcher(int issueId)
+        {
+            return _context.Watchers.Where(x => x.IssueId == issueId).Select(x =>x.UserId).ToList();
+        }
+
         #endregion
     }
 }

@@ -33,5 +33,13 @@ namespace be.Services.WatcherService
             _watcherRepository.StopWatcherIssue(userId, issuesId);
         }
         #endregion
+
+        #region PhuNV17
+        public List<int> getListWatcher(int issueId)
+        {
+            return _watcherRepository.getListWatcher(issueId);
+        }
+
+        #endregion
     }
 }

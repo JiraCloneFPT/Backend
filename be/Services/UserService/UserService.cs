@@ -102,6 +102,16 @@ namespace be.Services.UserService
         {
             return _userRepository.ChangePassword(userId, password);
         }
+
+
+        #endregion
+
+        #region PhuNV17 
+        public List<string> GetListEmailUsers(List<int> listId)
+        {
+            return _userRepository.GetListEmailUsers(listId);
+        }
+
         #endregion
     }
 }

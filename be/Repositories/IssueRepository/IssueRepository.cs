@@ -164,6 +164,7 @@ namespace be.Repositories.IssueRepository
                 var dateTime = DateTime.Now;
                 history.IssueId = issue.IssueId;
                 history.EditorId = userId;
+                history.IssueId = issue.IssueId;
                 history.ProjectId = issue.ProjectId;
                 history.IssueTypeId = issue.IssueTypeId;
                 history.ComponentId = issue.ComponentId;
