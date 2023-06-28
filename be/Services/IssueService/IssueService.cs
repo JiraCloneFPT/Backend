@@ -271,13 +271,21 @@ namespace be.Services.IssueService
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
                 }
+                if (issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
+                }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
                 {
                     return new ResponseDTO
                     {
                         code = 200,
-                        message = "Edit Issue and Add history success!",
+                        message = "Cancel Issue and Add history success!",
                         data = issueEdited
                     };
                 }
@@ -286,7 +294,7 @@ namespace be.Services.IssueService
                     return new ResponseDTO
                     {
                         code = 500,
-                        message = "Edit Issue OR Add History Failed!"
+                        message = "Cancel Issue OR Add History Failed!"
                     };
                 }
             }
@@ -309,6 +317,14 @@ namespace be.Services.IssueService
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                if (issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
                 }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
@@ -347,6 +363,14 @@ namespace be.Services.IssueService
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                if (issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
                 }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
@@ -387,6 +411,14 @@ namespace be.Services.IssueService
                 if (issue.AttachFile != null)
                 {
                     await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                }
+                if(issue.Comment != null)
+                {
+                    CommentDTO comment = new CommentDTO();
+                    comment.IssueId = issue.IssueId;
+                    comment.UserId = issue.UserId.Value;
+                    comment.CommentContent = issue.Comment;
+                    _issueRepository.AddComment(comment);
                 }
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueEdited, issue.UserId.Value);
                 if (issueEdited != null && historyCreated != null)
