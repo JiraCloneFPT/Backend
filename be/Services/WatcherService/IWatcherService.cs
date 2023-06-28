@@ -8,7 +8,7 @@
 
         public int CountWatcher(int issuesId);
 
-        public bool CheckWatcher(int? userId, int? issueId);
+        public bool CheckWatcher(int? issueId, int? userId);
         #endregion
 
         public List<int> getListWatcher(int issueId);

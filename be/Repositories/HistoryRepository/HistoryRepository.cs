@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using be.Controllers;
 using be.DTOs;
 using be.Helpers;
 using be.Models;
+using Microsoft.EntityFrameworkCore;
 using DocumentFormat.OpenXml.Bibliography;
 
 namespace be.Repositories.HistoryRepository
@@ -9,6 +11,7 @@ namespace be.Repositories.HistoryRepository
     public class HistoryRepository : IHistoryRepository
     {
         private readonly DbJiraCloneContext _context;
+        private readonly HandleData handleData;
         private readonly Mapper mapper;
         private readonly HandleData handleData;
 
@@ -19,28 +22,35 @@ namespace be.Repositories.HistoryRepository
             handleData = new HandleData();
         }
 
+        public async Task<List<ObjectHistory>> HandleCompareObject(int idIssue)
+        {
+            var history = await _context.Histories.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.UpdateTime).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
+            var result = new List<ObjectHistory>();
+            if (history.Count >= 2)
+            {
+                for (int i = 0; i < history.Count - 1; i++)
+                {
+                    var data = new ObjectHistory();
+                    data.EditorName = history[i + 1].EditorName;
+                    data.Properties = CompareTwoObject.CompareObjects<HistoryCompareDTO>(mapper.Map<HistoryCompareDTO>(history[i]), mapper.Map<HistoryCompareDTO>(history[i + 1]));
+                    data.CreateAt = history[i + 1].UpdateTime;
+                    result.Add(data);
+                }
+            }
+
+            return result;
+        }
         public History GetHistory(int id)
         {
-            return _context.Histories.FirstOrDefault(x => x.HistoryId == id); 
-        }
-
-        public List<int> GetTwoMaxHistoryIds(int issueId)
-        {
-            var historyIds = _context.Histories
-                .Where(x => x.IssueId == issueId)
-                .OrderByDescending(h => h.UpdateTime)
-                .Select(h => h.HistoryId)
-                .Take(2)
-                .ToList();
-            return historyIds;
+            return _context.Histories.FirstOrDefault(x => x.HistoryId == id);
         }
         public HistoryForEmail GetHistoryForEmail (int issueId)
-        {
+            {
             var history = _context.Histories.Where(x => x.IssueId == issueId).OrderByDescending(x => x.HistoryId).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToList();
 
             var result = new HistoryForEmail();
             if (history.Count >= 2)
-            {
+                {
 
                 result.ProjectName = history[0].Project;
                 result.IssueId = issueId;

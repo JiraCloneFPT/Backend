@@ -12,9 +12,9 @@ namespace be.Services.WatcherService
             _watcherRepository = new WatcherRepository();
         }
 
-        public bool CheckWatcher(int? userId, int? issueId)
+        public bool CheckWatcher(int? issueId, int? userId)
         {
-            return _watcherRepository.CheckWatcher(userId, issueId);
+            return _watcherRepository.CheckWatcher(issueId, userId);
         }
 
         #region HuyNG5 - code bổ sung

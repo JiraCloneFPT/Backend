@@ -12,11 +12,13 @@ namespace be.Repositories.WatcherRepository
         }
 
 
-        public bool CheckWatcher(int? userId, int? issueId)
+        public bool CheckWatcher(int? issueId, int? userId)
         {
             // true: chưa watcher
             // false: đã watcher
-            var check = _context.Watchers.SingleOrDefault(x => x.IssueId == userId && x.UserId == userId);
+            //var check = _context.Watchers.SingleOrDefault(x => x.IssueId == issueId && x.UserId == userId);
+            var check = _context.Watchers.Where(x => x.IssueId == issueId && x.UserId == userId).FirstOrDefault();
+
             if (check == null)
             {
                 return true;
@@ -44,7 +46,8 @@ namespace be.Repositories.WatcherRepository
 
         public void StopWatcherIssue(int? userId, int? issuesId)
         {
-            var deleteWatcher = _context.Watchers.SingleOrDefault(x => x.IssueId == userId && x.UserId == userId);
+            var deleteWatcher = _context.Watchers.SingleOrDefault(x => x.IssueId == issuesId && x.UserId == userId);
+            
             _context.Watchers.Remove(deleteWatcher);
             _context.SaveChanges();
         }

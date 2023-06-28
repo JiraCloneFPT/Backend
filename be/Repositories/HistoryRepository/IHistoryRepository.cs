@@ -1,11 +1,13 @@
 ﻿using be.Models;
+using be.Controllers;
 
 namespace be.Repositories.HistoryRepository
 {
     public interface IHistoryRepository
     {
+        Task<List<ObjectHistory>> HandleCompareObject(int idIssue);
+        Task<object> GetElementFirst(int idIssue);
         public History GetHistory(int id);
-        public List<int> GetTwoMaxHistoryIds(int issueId);
 
         public HistoryForEmail GetHistoryForEmail(int issueId);
 

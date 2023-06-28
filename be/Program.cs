@@ -22,6 +22,7 @@ using be.Services.WatcherService;
 using be.Repositories.WatcherRepository;
 using be.Services.HistoryService;
 using be.Repositories.HistoryRepository;
+using be.Services.History;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,8 @@ builder.Services.AddCors();
 
 
 var services = builder.Services;
+services.AddScoped<IHistoryRepository, HistoryRepository>();
+services.AddScoped<IHistoryService, HistoryService>();
 //Export
 services.AddScoped<IExportRepository, ExportRepository>();
 services.AddScoped<IExportService, ExportService>();

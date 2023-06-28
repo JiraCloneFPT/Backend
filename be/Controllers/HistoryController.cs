@@ -2,6 +2,7 @@
 using be.DTOs;
 using be.Helpers;
 using be.Models;
+using be.Services.History;
 using be.Services.IssueService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,22 +17,19 @@ namespace be.Controllers
     [ApiController]
     public class HistoryController : ControllerBase
     {
-        private readonly DbJiraCloneContext _context;
-        private readonly Mapper mapper;
-        private readonly HandleData handleData;
-        public HistoryController(DbJiraCloneContext db)
+        private readonly IHistoryService historyService;
+        public HistoryController(IHistoryService historyService)
         {
-            _context = db;
-            mapper = MapperConfig.InitializeAutomapper();
-            handleData = new HandleData();
+            this.historyService = historyService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult> HandleCompareObject(int idIssue)
         {
             var history = await _context.Histories.Where(x => x.IssueId == idIssue).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).OrderByDescending(x => x.UpdateTime).ToListAsync();
             var result = new List<ObjectHistory>();
             if(history.Count >= 2)
+            try
             {
                 for (int i = 0; i < history.Count - 1; i++)
                 {
@@ -41,13 +39,36 @@ namespace be.Controllers
                     data.CreateAt = history[i+1].UpdateTime;
                     result.Add(data);
                 }
-            }
+            
             
             return Ok(new
+                var result = await historyService.HandleCompareObject(idIssue);
+                return Ok(new
+                {
+                    status = 200,
+                    data = result
+                });
+            }
+            catch
             {
-                status = 200,
-                data = result
-            });
+                return BadRequest();
+            }
+            
+            
+        }
+        [HttpGet]
+        public async Task<ActionResult> GetElementFirst(int idIssue)
+        {
+            try
+            {
+                var result = await historyService.GetElementFirst(idIssue);
+                return Ok(result);
+
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("EmailHistory")]
