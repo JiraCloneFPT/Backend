@@ -130,7 +130,7 @@ namespace be.Services.OtherService
 
                 }
                 //email.Subject = "[FI2.0 JIRA3] Updates for FSOFTACADEMY-" + issue.IssueId + ": " + issue.Summary + "";
-                email.Subject = "[FI2.0 JIRA3] Updates for "+ historyForEmail.ProjectShortName + "/" + historyForEmail.IssueId + " "  ;
+                email.Subject = "[FI2.0 JIRA3] Updates for "+ historyForEmail.ProjectShortName + "-" + historyForEmail.IssueId + " : "+ historyForEmail.IssueSummary+ " "  ;
 
                 email.Body = new TextPart(TextFormat.Html)
                 {
