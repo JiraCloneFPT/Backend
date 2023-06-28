@@ -30,7 +30,7 @@ namespace be.Repositories.HistoryRepository
                     var data = new ObjectHistory();
                     data.EditorName = history[i + 1].EditorName;
                     data.Properties = CompareTwoObject.CompareObjects<HistoryCompareDTO>(mapper.Map<HistoryCompareDTO>(history[i]), mapper.Map<HistoryCompareDTO>(history[i + 1]));
-                    data.CreateAt = history[i + 1].CreateTime;
+                    data.CreateAt = history[i + 1].UpdateTime;
                     result.Add(data);
                 }
             }
@@ -40,6 +40,13 @@ namespace be.Repositories.HistoryRepository
         public async Task<object> GetElementFirst(int idIssue)
         {
             var history = await _context.Histories.Where(x => x.IssueId == idIssue).OrderByDescending(x => x.UpdateTime).Select(x => handleData.HandleDataHistory(mapper.Map<HistoryDTO>(x))).ToListAsync();
+            if(history.Count == 0)
+            {
+                return new
+                {
+                    status = 400,
+                };
+            }
             return new
             {
                 status = 200,

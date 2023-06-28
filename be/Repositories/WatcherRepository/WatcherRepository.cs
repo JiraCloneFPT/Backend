@@ -16,7 +16,9 @@ namespace be.Repositories.WatcherRepository
         {
             // true: chưa watcher
             // false: đã watcher
-            var check = _context.Watchers.SingleOrDefault(x => x.IssueId == issueId && x.UserId == userId);
+            //var check = _context.Watchers.SingleOrDefault(x => x.IssueId == issueId && x.UserId == userId);
+            var check = _context.Watchers.Where(x => x.IssueId == issueId && x.UserId == userId).FirstOrDefault();
+
             if (check == null)
             {
                 return true;
