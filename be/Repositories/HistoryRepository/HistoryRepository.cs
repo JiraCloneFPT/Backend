@@ -31,9 +31,9 @@ namespace be.Repositories.HistoryRepository
                 for (int i = 0; i < history.Count - 1; i++)
                 {
                     var data = new ObjectHistory();
-                    data.EditorName = history[i + 1].EditorName;
+                    data.EditorName = history[i].EditorName;
                     data.Properties = CompareTwoObject.CompareObjects<HistoryCompareDTO>(mapper.Map<HistoryCompareDTO>(history[i]), mapper.Map<HistoryCompareDTO>(history[i + 1]));
-                    data.CreateAt = history[i + 1].UpdateTime;
+                    data.CreateAt = history[i].UpdateTime;
                     result.Add(data);
                 }
             }

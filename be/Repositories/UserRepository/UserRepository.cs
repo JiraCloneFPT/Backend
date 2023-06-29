@@ -62,7 +62,7 @@ namespace be.Repositories.UserRepository
         }
         public IList<User> GetAllUser()
         {
-            return _context.Users.ToList();
+            return _context.Users.OrderByDescending(x => x.UserId).ToList();
             //return _context.Users.W;
         }
 
