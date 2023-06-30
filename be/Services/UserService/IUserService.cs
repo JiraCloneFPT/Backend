@@ -28,6 +28,7 @@ namespace be.Services.UserService
         public void AddUserByExcel(User user);
         public IList<User> GetAllAccount(string account);
         public List<string> GetListEmailUsers(List<int> listId);
+        public string GenerateAccountFromName(string fullName);
 
         #endregion
 

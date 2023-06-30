@@ -27,6 +27,7 @@ namespace be.Repositories.UserRepository
         public void AddUserByExcel(User user);
         public IList<User> GetAllAccount(string account);
         public List<string> GetListEmailUsers(List<int> listId);
+        public string GenerateAccountFromName(string fullName); 
 
         #endregion
         Task<object> GetInfo(string token);

@@ -170,6 +170,31 @@ namespace be.Repositories.UserRepository
             }
             return account;
         }
+
+        #region PhuNV17 
+        public string GenerateAccountFromName(string fullName)
+        {
+            string[] names = fullName.Split(" ");
+            string lastName = names[names.Length - 1];
+            string plusCharacter = null;
+            if (names.Length == 2)
+            {
+                string firstChar = names[0].Substring(0, 1);
+                plusCharacter = firstChar;
+            }
+            else
+            {
+                for (int i = 0; i < names.Length - 1; i++)
+                {
+                    string firstChar = names[i].Substring(0, 1);
+                    plusCharacter += firstChar;
+                }
+            }
+            var account = lastName + plusCharacter.ToUpper();
+            return account; 
+        }
+
+        #endregion
         public string GenerateRandomString()
         {
             Random random = new Random();

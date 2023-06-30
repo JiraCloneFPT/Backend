@@ -59,14 +59,25 @@ namespace be.Controllers
                     user.AccountName = account;
                 }else
                 {
-                    if (numberOfAccount > 0)
+                    if (record[i][3].Length <= 10)
                     {
-                        user.AccountName = record[i][3] + (numberOfAccount + 1).ToString();
+                        if (record[i][3].Contains(_userService.ReplaceVietnameseCharacters(_userService.GenerateAccountFromName(record[i][0]))))
+                        {
+                            user.AccountName = account; 
+                        }else if (numberOfAccount > 0)
+                        {
+                            user.AccountName = record[i][3] + (numberOfAccount + 1).ToString();
+                        }
+                        else
+                        {
+                            user.AccountName = record[i][3];
+                        }
                     }
                     else
                     {
-                        user.AccountName = record[i][3];
+                        user.AccountName = account;
                     }
+                    
                 }
                 await Task.Run(() => _userService.AddUserByExcel(user));
                 //await _userService.AddUser(user);
