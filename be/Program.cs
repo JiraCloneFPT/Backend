@@ -22,7 +22,7 @@ using be.Services.WatcherService;
 using be.Repositories.WatcherRepository;
 using be.Services.HistoryService;
 using be.Repositories.HistoryRepository;
-
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +46,8 @@ builder.Services.AddCors();
 
 
 var services = builder.Services;
+services.AddHttpContextAccessor();
+
 services.AddScoped<IHistoryRepository, HistoryRepository>();
 services.AddScoped<IHistoryService, HistoryService>();
 //Export
@@ -87,7 +89,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 
 app.UseCors(builder =>
 {
@@ -99,6 +100,14 @@ app.UseCors(builder =>
 
 app.UseAuthorization();
 //app.UseAuthentication();
+
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot")),
+    RequestPath = "/AttachFiles"
+});
 app.MapControllers();
 
 app.Run();

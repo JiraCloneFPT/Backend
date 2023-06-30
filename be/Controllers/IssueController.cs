@@ -129,7 +129,7 @@ namespace be.Controllers
                 {
                     return BadRequest();
                 }
-                var resData = await _issueService.AddFile(fileDTO);
+                var resData = await _issueService.AddFiles(fileDTO);
                 return Ok(resData);
             }
             catch (Exception ex)

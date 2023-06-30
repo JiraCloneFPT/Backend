@@ -22,6 +22,7 @@ namespace be.Repositories.IssueRepository
 
         Task<History> CreateHistoryIssue(Issue issue, int userId);
 
+        Task<bool> AddFiles(List<IFormFile> file, Issue issue);
         Task<bool> AddFile(IFormFile file, Issue issue);
 
         // Edit Issue

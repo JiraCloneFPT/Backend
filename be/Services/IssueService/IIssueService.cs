@@ -15,7 +15,7 @@ namespace be.Services.IssueService
         Task<ResponseDTO> InProgessIssue(int userId, int issueId);
 
         Task<ResponseDTO> RemoveFile(int fileId);
-        Task<ResponseDTO> AddFile(FileDTO fileDTO);
+        Task<ResponseDTO> AddFiles(FileDTO fileDTO);
 
         Task<ResponseDTO> GetFilesIssue(int issueId);
         Task<ResponseDTO> CancelIssue(IssueCreateDTO issue);
