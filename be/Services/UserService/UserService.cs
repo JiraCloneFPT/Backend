@@ -112,6 +112,11 @@ namespace be.Services.UserService
             return _userRepository.GetListEmailUsers(listId);
         }
 
+        public string GenerateAccountFromName(string fullName)
+        {
+            return _userRepository.GenerateAccountFromName(fullName); 
+        }
+
         #endregion
     }
 }
