@@ -212,8 +212,6 @@ namespace be.Services.IssueService
         {
             try
             {
-                //var issue = await _issueRepository.GetByIdAsync(fileDTO.IssueId);
-                //var result = await _issueRepository.AddFile(fileDTO.AttachFile, issue);
                 bool isAdded = false;
                 if (fileDTO.IssueId != null && fileDTO.AttachFiles != null)
                 {
@@ -296,10 +294,6 @@ namespace be.Services.IssueService
                 {
                     await _issueRepository.AddFiles(issue.AttachFiles, issueEdited);
                 }
-                //if (issue.AttachFile != null)
-                //{
-                //    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
-                //}
                 if (issue.Comment != null)
                 {
                     CommentDTO comment = new CommentDTO();
@@ -354,10 +348,6 @@ namespace be.Services.IssueService
                 {
                     await _issueRepository.AddFiles(issue.AttachFiles, issueEdited);
                 }
-                //if (issue.AttachFile != null)
-                //{
-                //    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
-                //}
 
                 if (issue.Comment != null)
                 {
