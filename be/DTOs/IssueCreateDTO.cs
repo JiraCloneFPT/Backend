@@ -102,6 +102,8 @@
 
         public IFormFile? AttachFile { get; set; }
 
+        public List<IFormFile>? AttachFiles { get; set; }
+
         public int? UserId { get; set; }
 
         public string? Comment { get; set; }

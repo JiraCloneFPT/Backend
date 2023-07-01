@@ -19,16 +19,10 @@ namespace be.Services.IssueService
     public class IssueService : IIssueService
     {
         private readonly IIssueRepository _issueRepository;
-
         private readonly IUserService _userService; 
-
         private readonly IWatcherService _watcherService;
-
         private readonly  IHistoryService _historyService;
        
-
-
-
         public IssueService(IIssueRepository issueRepository, IUserService userService, IWatcherService watcherService, IHistoryService historyService)
         {
             _issueRepository = issueRepository;
@@ -37,7 +31,6 @@ namespace be.Services.IssueService
             _watcherService = watcherService;
             _historyService = historyService;
         }
-
 
         public async Task<ResponseDTO> GetComments(int issueId)
         {
@@ -215,19 +208,22 @@ namespace be.Services.IssueService
             }
         }
 
-        public async Task<ResponseDTO> AddFile(FileDTO fileDTO)
+        public async Task<ResponseDTO> AddFiles(FileDTO fileDTO)
         {
             try
             {
-                var issue = await _issueRepository.GetByIdAsync(fileDTO.IssueId);
-                var result = await _issueRepository.AddFile(fileDTO.AttachFile, issue);
-                if (result != null)
+                bool isAdded = false;
+                if (fileDTO.IssueId != null && fileDTO.AttachFiles != null)
+                {
+                    var issue = await  _issueRepository.GetByIdAsync(fileDTO.IssueId);
+                    isAdded = isAdded = await _issueRepository.AddFiles(fileDTO.AttachFiles, issue);
+                }
+                if (isAdded)
                 {
                     return new ResponseDTO
                     {
                         code = 200,
                         message = "AddFile Success!",
-                        data = result
                     };
                 }
                 else
@@ -294,9 +290,9 @@ namespace be.Services.IssueService
 
                 // get Watcher list
                 List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
-                if (issue.AttachFile != null)
+                if (issue.AttachFiles != null)
                 {
-                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                    await _issueRepository.AddFiles(issue.AttachFiles, issueEdited);
                 }
                 if (issue.Comment != null)
                 {
@@ -348,9 +344,9 @@ namespace be.Services.IssueService
 
                 // get Watcher list
                 List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
-                if (issue.AttachFile != null)
+                if (issue.AttachFiles != null)
                 {
-                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                    await _issueRepository.AddFiles(issue.AttachFiles, issueEdited);
                 }
 
                 if (issue.Comment != null)
@@ -402,10 +398,14 @@ namespace be.Services.IssueService
 
                 // get Watcher list
                 List<string> listEmailWatchers = _userService.GetListEmailUsers(_watcherService.getListWatcher(issueID));
-                if (issue.AttachFile != null)
+                if (issue.AttachFiles != null)
                 {
-                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                    await _issueRepository.AddFiles(issue.AttachFiles, issueEdited);
                 }
+                //if (issue.AttachFile != null)
+                //{
+                //    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                //}
                 if (issue.Comment != null)
                 {
                     CommentDTO comment = new CommentDTO();
@@ -452,10 +452,14 @@ namespace be.Services.IssueService
             {
                 var statusIssueId = (await _issueRepository.GetByIdAsync(issue.IssueId.Value)).StatusIssueId;
                 var issueEdited = await _issueRepository.EditIssue(issue, statusIssueId.Value);
-                if (issue.AttachFile != null)
+                if (issue.AttachFiles != null)
                 {
-                    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                    await _issueRepository.AddFiles(issue.AttachFiles, issueEdited);
                 }
+                //if (issue.AttachFile != null)
+                //{
+                //    await _issueRepository.AddFile(issue.AttachFile, issueEdited);
+                //}
 
                 // lấy issueID 
                 int issueID = issue.IssueId.Value;
@@ -542,10 +546,14 @@ namespace be.Services.IssueService
             try
             {
                 var issueCreated = await _issueRepository.CreateIssue(issue);
-                if(issue.AttachFile != null)
+                if (issue.AttachFiles != null)
                 {
-                    await _issueRepository.AddFile(issue.AttachFile, issueCreated);
+                    await _issueRepository.AddFiles(issue.AttachFiles, issueCreated);
                 }
+                //if (issue.AttachFile != null)
+                //{
+                //    await _issueRepository.AddFile(issue.AttachFile, issueCreated);
+                //}
                 var historyCreated = await _issueRepository.CreateHistoryIssue(issueCreated, issue.UserId.Value);
                 if (issueCreated != null && historyCreated != null)
                 {

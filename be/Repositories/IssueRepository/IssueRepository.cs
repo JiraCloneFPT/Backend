@@ -21,12 +21,14 @@ namespace be.Repositories.IssueRepository
         private readonly HandleData handleData;
         private readonly Mapper mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IssueRepository(DbJiraCloneContext context, IWebHostEnvironment webHostEnvironment) : base(context)
+        public IssueRepository(DbJiraCloneContext context, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor) : base(context)
         {
             _webHostEnvironment = webHostEnvironment;
             mapper = MapperConfig.InitializeAutomapper();
             handleData = new HandleData();
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -141,9 +143,10 @@ namespace be.Repositories.IssueRepository
 
                     fileList.Add(new
                     {
-                        Id = file.FileAttachmentId,
+                        Id = file.FileAttachmentId ,
                         Name = file.FileName,
-                        Content = base64String
+                        Content = base64String,
+                        fileSrc = String.Format("{0}://{1}{2}/AttachFiles/{3}", _httpContextAccessor.HttpContext.Request.Scheme, _httpContextAccessor.HttpContext.Request.Host, _httpContextAccessor.HttpContext.Request.PathBase, file.FileName)
                     });
                 }
 
@@ -218,6 +221,40 @@ namespace be.Repositories.IssueRepository
                 var lastHistory = context.Histories.Where(e => e.UpdateTime == dateTime).FirstOrDefault();
 
                 return lastHistory;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public async Task<bool> AddFiles(List<IFormFile> files, Issue issue)
+        {
+            try
+            {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                int numAdded = 0;
+                foreach (var file in files)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+                    string extension = Path.GetExtension(file.FileName);
+                    fileName = fileName + DateTime.Now.ToString("yymmssfff") + extension;
+                    string path = Path.Combine(wwwRootPath + "/AttachFiles/", fileName);
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        file.CopyToAsync(fileStream);
+                    }
+                    FileAttachment fileAttachment = new FileAttachment();
+                    fileAttachment.IssueId = issue.IssueId;
+                    fileAttachment.FileName = fileName;
+                    fileAttachment.FilePath = path;
+                    fileAttachment.Created = DateTime.Now;
+                    context.FileAttachments.Add(fileAttachment);
+                    var fileAdded =  context.SaveChanges();
+                    numAdded = fileAdded > 0 ? fileAdded : numAdded;
+                }
+                return numAdded > 0 ? true : false;
             }
             catch (Exception ex)
             {
